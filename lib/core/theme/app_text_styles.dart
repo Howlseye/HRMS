@@ -18,6 +18,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
   );
 
+  static const TextStyle displayMediumHeavy = TextStyle(
+    fontFamily: fontFamilySecondary,
+    fontSize: 24,
+    fontWeight: FontWeight.w900,
+  );
+
   static const TextStyle heading = TextStyle(
     fontFamily: fontFamilySecondary,
     fontSize: 20,
@@ -58,5 +64,11 @@ class AppTextStyles {
     fontFamily: fontFamilyPrimary,
     fontSize: 10,
     fontWeight: FontWeight.w500,
+  );
+
+  static const TextStyle buttonText = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
   );
 }
