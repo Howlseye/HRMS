@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/main/screens/main_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
 
 class AppRouter {
@@ -12,6 +13,10 @@ class AppRouter {
       GoRoute(
         path: '/',
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/main',
+        builder: (context, state) => const MainScreen(),
       ),
       GoRoute(
         path: '/login',

@@ -41,4 +41,8 @@ class AuthController {
     await Future.delayed(const Duration(seconds: 2));
     _ref.read(resetPasswordLoadingProvider.notifier).setLoading(false);
   }
+
+  Future<void> logout() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
 }

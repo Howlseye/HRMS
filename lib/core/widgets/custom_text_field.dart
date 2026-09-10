@@ -7,6 +7,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final bool isPassword;
   final TextEditingController? controller;
+  final bool isRequired;
 
   const CustomTextField({
     super.key,
@@ -14,6 +15,7 @@ class CustomTextField extends StatefulWidget {
     required this.hintText,
     this.isPassword = false,
     this.controller,
+    this.isRequired = false,
   });
 
   @override
@@ -33,10 +35,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
             text: widget.label,
             style: AppTextStyles.bodyMediumMedium.copyWith(color: AppColors.textPrimary),
             children: [
-              TextSpan(
-                text: '*',
-                style: AppTextStyles.bodyMediumMedium.copyWith(color: AppColors.textDanger),
-              ),
+              if (widget.isRequired)
+                TextSpan(
+                  text: ' *',
+                  style: AppTextStyles.bodyMediumMedium.copyWith(color: AppColors.textDanger),
+                ),
             ],
           ),
         ),
@@ -45,6 +48,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
           controller: widget.controller,
           obscureText: widget.isPassword ? _obscureText : false,
           style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+          validator: (value) {
+            if (widget.isRequired && (value == null || value.trim().isEmpty)) {
+              return '${widget.label} wajib diisi';
+            }
+            return null;
+          },
           decoration: InputDecoration(
             hintText: widget.hintText,
             hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.iconDisabled),

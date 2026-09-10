@@ -18,6 +18,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -36,8 +37,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -65,6 +68,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               CustomTextField(
                 label: AppStrings.emailLabel,
                 hintText: AppStrings.emailHint,
+                isRequired: true,
                 controller: _emailController,
               ),
               const SizedBox(height: 16),
@@ -72,6 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 label: AppStrings.passwordLabel,
                 hintText: AppStrings.passwordHint,
                 isPassword: true,
+                isRequired: true,
                 controller: _passwordController,
               ),
               const SizedBox(height: 16),
@@ -108,9 +113,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 text: AppStrings.signIn,
                 isLoading: isLoading,
                 onPressed: () {
-                  ref
-                      .read(authControllerProvider)
-                      .login(_emailController.text, _passwordController.text);
+                  if (_formKey.currentState!.validate()) {
+                    ref
+                        .read(authControllerProvider)
+                        .login(_emailController.text, _passwordController.text)
+                        .then((_) {
+                      if (context.mounted) {
+                        context.go('/main');
+                      }
+                    });
+                  }
                 },
               ),
               const SizedBox(height: 16),
@@ -125,6 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }

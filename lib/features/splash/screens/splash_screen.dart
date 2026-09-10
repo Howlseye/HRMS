@@ -1,3 +1,5 @@
+import 'package:absensi/core/constants/app_strings.dart';
+import 'package:absensi/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
@@ -34,14 +36,26 @@ class _SplashScreenState extends State<SplashScreen> {
               SizedBox(height: MediaQuery.of(context).size.height * 0.3),
               Image.asset(
                 'assets/images/app_logo.png',
-                 scale: 30,
-        
+                 scale: 0.8,
+              ),
+              Text(
+                AppStrings.appName,
+                style: AppTextStyles.displayLarge.copyWith(
+                  color: AppColors.primaryBlueStart,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppStrings.appSubtitle,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
               Lottie.asset(
                 'assets/lottie/loading.json',
-                width: 200,
-                height: 200,
-                fit: BoxFit.contain,
+                width: 150,
               ),
             ],
           ),

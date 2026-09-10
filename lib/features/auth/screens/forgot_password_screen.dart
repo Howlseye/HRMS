@@ -17,6 +17,7 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -33,8 +34,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -62,6 +65,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               CustomTextField(
                 label: AppStrings.emailLabel,
                 hintText: AppStrings.emailHint,
+                isRequired: true,
                 controller: _emailController,
               ),
               const SizedBox(height: 32),
@@ -69,9 +73,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 text: AppStrings.sendResetEmail,
                 isLoading: isLoading,
                 onPressed: () {
-                  ref
-                      .read(authControllerProvider)
-                      .sendResetEmail(_emailController.text);
+                  if (_formKey.currentState!.validate()) {
+                    ref
+                        .read(authControllerProvider)
+                        .sendResetEmail(_emailController.text);
+                  }
                 },
               ),
               const SizedBox(height: 16),
@@ -100,6 +106,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }
