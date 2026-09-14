@@ -16,9 +16,10 @@ final activityProvider = Provider<List<ActivityModel>>((ref) {
       icon: Icons.logout,
       title: 'Check Out',
       date: 'June 24, 2024',
-      time: '17:05',
+      time: '16:30',
       iconColor: AppColors.iconGray,
       iconBgColor: AppColors.menuBgGray,
+      isTimeWarning: true,
     ),
   ];
 });

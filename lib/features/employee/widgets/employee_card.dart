@@ -6,19 +6,23 @@ import '../models/employee_model.dart';
 
 class EmployeeCard extends StatelessWidget {
   final EmployeeModel employee;
+  final VoidCallback? onTap;
 
-  const EmployeeCard({super.key, required this.employee});
+  const EmployeeCard({super.key, required this.employee, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
         color: AppColors.bgWhite,
         borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
         children: [
           CircleAvatar(
             radius: 24,
@@ -60,11 +64,14 @@ class EmployeeCard extends StatelessWidget {
               colorFilter: const ColorFilter.mode(AppColors.iconDisabled, BlendMode.srcIn),
             ),
             onPressed: () {
-              // TODO: Implement WhatsApp integration if needed
+              // Handle WhatsApp action
             },
           ),
         ],
       ),
+    ),
+  ),
+),
     );
   }
 }

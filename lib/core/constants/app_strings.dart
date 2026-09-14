@@ -39,6 +39,26 @@ class AppStrings {
   static const String menuLogBook = 'Log Book';
   static const String menuAll = 'Semua';
 
+  // Attendance Screen
+  static const String titleAttendance = 'Absensi';
+  static const String historyAttendance = 'Histori Absensi';
+  static const String logActivity = 'Log Activity';
+  static const String statCuti = 'Cuti / Sakit';
+  static const String statTerlambat = 'Terlambat';
+  static const String statPulangAwal = 'Pulang Awal';
+  static const String statTidakAbsen = 'Tidak Absen';
+  static const String filterMonth = 'Agustus 2026';
+  static const String attendanceList = 'Daftar Kehadiran';
+  static const String totalDays = '20 hari';
+
+  static const String todatsActivity = 'Aktivitas Hari Ini'; // Typo in existing codebase, keeping it for now or fix it later? Wait, the string was 'Aktivitas Hari Ini'.
+  static const String detailAttendanceTitle = 'Detail Attendance';
+  static const String reasonLate = 'Alasan Terlambat';
+  static const String reasonEarlyOut = 'Alasan Pulang Awal';
+  static const String none = '-';
+  static const String notLate = 'Tidak terlambat';
+  static const String notEarlyOut = 'Tidak pulang awal';
+  
   static const String todaysActivity = 'Aktivitas Hari Ini';
   static const String viewAll = 'Lihat Semua';
   static const String announcement = 'Pengumuman';
@@ -68,6 +88,12 @@ class AppStrings {
   static const String statusWaiting = 'Waiting';
 
   static const String menuEmployee = 'Employee';
+  static const String detailEmployeeTitle = 'Detail Employee';
+  static const String joinDate = 'Tanggal Bergabung';
+  static const String phoneNumber = 'No. Handphone';
+  static const String email = 'Email';
+  static const String location = 'Lokasi';
+  static const String placement = 'Penempatan';
   static const String searchEmployeeHint = 'Cari nama atau jabatan';
 
   static const String filterLocation = 'Lokasi';
@@ -89,5 +115,10 @@ class AppStrings {
     'UI/UX Designer',
     'Marketing',
     'Infrastructure'
+  ];
+
+  static const List<String> monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ];
 }

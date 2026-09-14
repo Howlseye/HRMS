@@ -7,6 +7,7 @@ class ActivityModel {
   final String time;
   final Color? iconColor;
   final Color? iconBgColor;
+  final bool isTimeWarning;
 
   ActivityModel({
     required this.icon,
@@ -15,5 +16,6 @@ class ActivityModel {
     required this.time,
     this.iconColor,
     this.iconBgColor,
+    this.isTimeWarning = false,
   });
 }

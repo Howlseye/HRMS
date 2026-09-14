@@ -30,6 +30,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
   );
 
+  static const TextStyle headingBold = TextStyle(
+    fontFamily: fontFamilySecondary,
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+  );
+
   static const TextStyle headingExtraBold = TextStyle(
     fontFamily: fontFamilySecondary,
     fontSize: 20,
@@ -64,6 +70,18 @@ class AppTextStyles {
     fontFamily: fontFamilyPrimary,
     fontSize: 14,
     fontWeight: FontWeight.w500,
+  );
+
+  static const TextStyle bodyMediumSemiBold = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const TextStyle bodyMediumExtraBold = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 14,
+    fontWeight: FontWeight.w800,
   );
 
   static const TextStyle bodySmall = TextStyle(

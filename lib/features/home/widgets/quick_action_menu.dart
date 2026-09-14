@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
@@ -19,7 +20,9 @@ class QuickActionMenu extends StatelessWidget {
             icon: 'assets/icons/absensi_icon.png',
             label: AppStrings.menuAbsensi,
             backgroundColor: AppColors.menuBgBlue,
-            onTap: () {},
+            onTap: () {
+              context.push('/attendance');
+            },
           ),
           const SizedBox(width: 24),
           _buildMenuItem(
@@ -72,15 +75,21 @@ class QuickActionMenu extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(16.0),
+          Material(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(16.0),
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              onTap: onTap,
+              child: SizedBox(
+                width: 56,
+                height: 56,
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Image.asset(icon, fit: BoxFit.none, scale: 0.9),
+                ),
+              ),
             ),
-            padding: const EdgeInsets.all(6),
-            child: Image.asset(icon, fit: BoxFit.none, scale: 0.9,),
           ),
           const SizedBox(height: 8),
           Text(

@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_strings.dart';
-import '../../../core/theme/app_text_styles.dart';
+import '../constants/app_colors.dart';
+import '../constants/app_strings.dart';
+import '../theme/app_text_styles.dart';
 
 class AttendanceCard extends StatelessWidget {
-  const AttendanceCard({super.key});
+  final bool transparentBackground;
+
+  const AttendanceCard({
+    super.key,
+    this.transparentBackground = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24.0),
-      padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-      decoration: BoxDecoration(
+      margin: transparentBackground ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: transparentBackground ? const EdgeInsets.symmetric(vertical: 0.0, horizontal: 24.0) : const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+      decoration: transparentBackground
+          ? null
+          : BoxDecoration(
         gradient: const LinearGradient(
           colors: [
             AppColors.primaryBlueStart,
@@ -45,7 +52,7 @@ class AttendanceCard extends StatelessWidget {
                 child: _buildActionButton(
                   icon: Icons.login,
                   label: AppStrings.checkIn,
-                  onPressed: null,
+                  onPressed: () {},
                 ),
               ),
               const SizedBox(width: 16),
@@ -53,7 +60,7 @@ class AttendanceCard extends StatelessWidget {
                 child: _buildActionButton(
                   icon: Icons.logout,
                   label: AppStrings.checkOut,
-                  onPressed: null,
+                  onPressed: () {},
                 ),
               ),
             ],
@@ -102,7 +109,7 @@ class AttendanceCard extends StatelessWidget {
       icon: Icon(icon, size: 20),
       label: Text(
         label,
-        style: AppTextStyles.heading,
+        style: AppTextStyles.headingSmall,
       ),
     );
   }
