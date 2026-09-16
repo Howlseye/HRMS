@@ -66,6 +66,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
   );
 
+  static const TextStyle titleBold = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
+  );
+
   static const TextStyle titleSmall = TextStyle(
     fontFamily: fontFamilyPrimary,
     fontSize: 14,
@@ -88,6 +94,12 @@ class AppTextStyles {
     fontFamily: fontFamilyPrimary,
     fontSize: 14,
     fontWeight: FontWeight.w600,
+  );
+
+  static const TextStyle bodyMediumBold = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
   );
 
   static const TextStyle bodyMediumExtraBold = TextStyle(

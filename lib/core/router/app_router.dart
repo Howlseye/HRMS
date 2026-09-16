@@ -11,6 +11,10 @@ import '../../features/attendance/models/attendance_log_entry.dart';
 import '../../features/employee/screens/employee_detail_screen.dart';
 import '../../features/employee/models/employee_model.dart';
 import '../../features/attendance/screens/attendance_success_screen.dart';
+import '../../features/leave/screens/leave_screen.dart';
+import '../../features/leave/screens/leave_detail_screen.dart';
+import '../../features/leave/screens/new_leave_screen.dart';
+import '../../features/leave/screens/success_leave_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -57,6 +61,45 @@ class AppRouter {
           state: state,
           child: const AttendanceScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/leave',
+        pageBuilder: (context, state) => _buildPageWithDefaultTransition(
+          context: context,
+          state: state,
+          child: const LeaveScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/leave/detail',
+        pageBuilder: (context, state) {
+          final args = state.extra as LeaveDetailArgs;
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: LeaveDetailScreen(args: args),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/leave/new',
+        pageBuilder: (context, state) {
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const NewLeaveScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/leave/success',
+        pageBuilder: (context, state) {
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const SuccessLeaveScreen(),
+          );
+        },
       ),
       GoRoute(
         path: '/attendance-log',

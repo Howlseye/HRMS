@@ -57,6 +57,7 @@ class AppStrings {
   static const String noAttendanceHistory = 'Tidak ada riwayat absensi';
   static const String noReason = 'Tidak mencantumkan alasan';
 
+  // Detail Attendance Screen
   static const String todatsActivity = 'Aktivitas Hari Ini';
   static const String detailAttendanceTitle = 'Detail Attendance';
   static const String reasonLate = 'Alasan Terlambat';
@@ -79,6 +80,7 @@ class AppStrings {
   static const String emptyActivity = 'Tidak ada aktivitas hari ini';
   static const String viewAll = 'Lihat Semua';
   static const String announcement = 'Pengumuman';
+  // Attendance Success Screen
   static const String checkInSent = 'Check In Dikirim';
   static const String checkOutSent = 'Check Out Dikirim';
   static const String back = 'Kembali';
@@ -100,12 +102,14 @@ class AppStrings {
   static const String reimbursement = 'Rembursement';
   static const String logout = 'Logout';
 
+  // Inbox Screen
   static const String menuInbox = 'Inbox';
   static const String markAllRead = 'Tandai Sudah Dibaca';
   static const String statusApproved = 'Approved';
   static const String statusRejected = 'Rejected';
   static const String statusWaiting = 'Waiting';
 
+  // Employee Screen
   static const String menuEmployee = 'Employee';
   static const String detailEmployeeTitle = 'Detail Employee';
   static const String joinDate = 'Tanggal Bergabung';
@@ -120,14 +124,18 @@ class AppStrings {
   static const String resetFilter = 'Reset Filter';
   static const String applyFilter = 'Terapkan Filter';
 
+  // Popups / Dialogs
   static const String popupMarkAllReadTitle = 'Tandai Semua Sudah Dibaca';
   static const String popupMarkAllReadDesc = 'Apakah Anda yakin ingin menandai semua inbox sebagai sudah dibaca? Tindakan ini tidak dapat dibatalkan.';
   static const String popupConfirm = 'Konfirmasi';
   static const String popupCancel = 'Batal';
 
+  // Error Messages
   static const String errorServerSide = 'Server Side Error';
   static const String errorDataNotFound = 'Data Not Found';
+  static String requiredField(String field) => '$field wajib diisi';
 
+  // Filters
   static const List<String> filterAvailableLocations = ['Bandung', 'Jakarta'];
   static const List<String> filterAvailableRoles = [
     'Accounting',
@@ -139,8 +147,71 @@ class AppStrings {
     'Infrastructure'
   ];
 
+  // Common Data
   static const List<String> monthNames = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ];
+
+  // Leave Screen
+  static const String leaveTitle = 'Pengajuan Cuti';
+  static const String remainingYearlyLeave = 'Sisa Cuti Tahunan';
+  static const String dummyLeaveDays = '8 hari';
+  static const String dummyLeaveFilter = 'Agustus 2022';
+  static const String noLeaveRequest = 'Belum ada pengajuan';
+  static const String noLeaveRequestSub = 'Anda dapat mengajukan melalui\ntombol di bawah ini';
+
+  static const String leaveType = 'Jenis Cuti';
+  static const String leaveDate = 'Tanggal';
+  static const String dummyLeaveTitle1 = 'HR-LAP-2026-234';
+  static const String dummyLeaveTitle2 = 'HR-LAP-2026-178';
+  static const String dummyLeaveTitle3 = 'HR-LAP-2026-155';
+  static const String dummyLeaveDate1 = '1 Aug 2026';
+  static const String dummyLeaveDate2 = '21 Jun 2026';
+  static const String dummyLeaveDate3 = '4 Feb 2026';
+  static const String dummyLeaveRange1 = '1 Sep - 3 Sep 2026';
+  static const String dummyLeaveRange2 = '12 Aug - 14 Aug 2026';
+  static const String dummyLeaveRange3 = '23 Jun - 27 Jun 2026';
+  static const String dummyLeaveTypeYearly = 'Cuti Tahunan';
+  static const String dummyLeaveTypeMarriage = 'Cuti Menikah';
+
+  // Detail Leave Screen
+  static const String detailLeaveTitle = 'Detail Pengajuan Cuti';
+  static const String waitingApproval = 'Menunggu Persetujuan';
+  static const String leaveApproved = 'Pengajuan Disetujui';
+  static const String leaveRejected = 'Pengajuan Ditolak';
+  static const String leaveId = 'ID Pengajuan';
+  static const String leaveSubmissionDate = 'Tanggal Pengajuan';
+  static const String leaveStartDate = 'Tanggal Mulai';
+  static const String leaveReason = 'Alasan Cuti';
+  static const String leaveRejectReason = 'Alasan Ditolak';
+  static const String cancelLeave = 'Batalkan Pengajuan';
+  // New Leave Screen
+  static const String newLeaveTitle = 'Pengajuan Cuti Baru';
+  static const String leaveTypeLabel = 'Jenis Cuti';
+  static const String leaveEndDate = 'Tanggal Selesai';
+  static const String selectLeaveType = 'Pilih jenis cuti';
+  static const String selectStartDate = 'Pilih tanggal mulai';
+  static const String selectEndDate = 'Pilih tanggal selesai';
+  static const String explainLeaveReason = 'Jelaskan alasan cuti';
+  static const String submit = 'Kirim';
+  static const String cancel = 'Batal';
+  static const String confirmLeave = 'Konfirmasi Cuti';
+  static const String ensureDataCorrect = 'Pastikan data yang dicantumkan sudah benar.';
+  static const String submitNow = 'Ajukan Sekarang';
+  
+  // Success Leave Screen
+  static const String submissionSuccess = 'Pengajuan Berhasil';
+  static const String submissionSuccessDesc = 'Pengajuan cuti Anda berhasil dikirim dan sedang menunggu proses persetujuan.';
+  static const String viewSubmission = 'Lihat Pengajuan';
+  static const String leaveTypeAnnual = 'Cuti Tahunan';
+  static const String leaveTypeSick = 'Cuti Sakit';
+  static const String leaveTypeMaternity = 'Cuti Melahirkan';
+
+  // Dummy Data
+  static const String dummyLeaveReason = 'Liburan dan ada acara keluarga di luar kota';
+  static const String dummyLeaveRejectReason = 'Mohon lampirkan approval yang sesuai dengan detail cuti diajukan';
+  static const String dummyLeaveStartDate1 = '1 Sep 2026';
+  static const String dummyLeaveStartDate2 = '12 Aug 2026';
+  static const String dummyLeaveStartDate3 = '23 Jun 2026';
 }

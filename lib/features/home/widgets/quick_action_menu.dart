@@ -43,7 +43,9 @@ class QuickActionMenu extends StatelessWidget {
             icon: 'assets/icons/cuti_icon.png',
             label: AppStrings.menuCuti,
             backgroundColor: AppColors.menuBgPink,
-            onTap: () {},
+            onTap: () {
+              context.push('/leave');
+            },
           ),
           const SizedBox(width: 24),
           _buildMenuItem(

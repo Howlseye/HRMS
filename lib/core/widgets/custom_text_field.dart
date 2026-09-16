@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_strings.dart';
 import '../theme/app_text_styles.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -8,6 +9,10 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final bool isRequired;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final int maxLines;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     super.key,
@@ -16,6 +21,10 @@ class CustomTextField extends StatefulWidget {
     this.isPassword = false,
     this.controller,
     this.isRequired = false,
+    this.readOnly = false,
+    this.onTap,
+    this.maxLines = 1,
+    this.suffixIcon,
   });
 
   @override
@@ -47,10 +56,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
         TextFormField(
           controller: widget.controller,
           obscureText: widget.isPassword ? _obscureText : false,
+          readOnly: widget.readOnly,
+          onTap: widget.onTap,
+          maxLines: widget.isPassword ? 1 : widget.maxLines,
           style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
           validator: (value) {
             if (widget.isRequired && (value == null || value.trim().isEmpty)) {
-              return '${widget.label} wajib diisi';
+              return AppStrings.requiredField(widget.label);
             }
             return null;
           },
@@ -84,7 +96,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       });
                     },
                   )
-                : null,
+                : widget.suffixIcon,
           ),
         ),
       ],
