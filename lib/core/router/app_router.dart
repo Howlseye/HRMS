@@ -10,6 +10,7 @@ import '../../features/attendance/screens/attendance_detail_screen.dart';
 import '../../features/attendance/models/attendance_log_entry.dart';
 import '../../features/employee/screens/employee_detail_screen.dart';
 import '../../features/employee/models/employee_model.dart';
+import '../../features/attendance/screens/attendance_success_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -73,6 +74,22 @@ class AppRouter {
             context: context,
             state: state,
             child: AttendanceDetailScreen(logEntry: logEntry),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/attendance-success',
+        pageBuilder: (context, state) {
+          final data = state.extra as Map<String, dynamic>? ?? {};
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: AttendanceSuccessScreen(
+              isCheckIn: data['isCheckIn'] ?? true,
+              date: data['date'] ?? '',
+              timeRange: data['timeRange'] ?? '',
+              alertMessage: data['alertMessage'],
+            ),
           );
         },
       ),

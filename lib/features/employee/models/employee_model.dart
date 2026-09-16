@@ -44,4 +44,18 @@ class EmployeeModel {
       placement: placement ?? this.placement,
     );
   }
+
+  factory EmployeeModel.fromJson(Map<String, dynamic> json, {String? avatarAsset}) {
+    return EmployeeModel(
+      id: json['name'] ?? '',
+      name: json['employee_name'] ?? '',
+      role: json['designation'] ?? '',
+      avatarAsset: avatarAsset,
+      phoneNumber: null,
+      location: json['branch'] ?? '',
+      joinDate: json['date_of_joining'] ?? '',
+      email: json['personal_email'] ?? '',
+      placement: json['department'] ?? '',
+    );
+  }
 }

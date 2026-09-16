@@ -6,6 +6,8 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/utils/shared_prefs_provider.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -19,6 +21,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final prefs = ref.read(sharedPreferencesProvider);
+      final rememberedEmail = prefs.getString('remembered_email');
+      if (rememberedEmail != null && rememberedEmail.isNotEmpty) {
+        _emailController.text = rememberedEmail;
+        ref.read(rememberMeProvider.notifier).toggle(true);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -120,6 +135,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         .then((_) {
                       if (context.mounted) {
                         context.go('/main');
+                      }
+                    }).catchError((e) {
+                      if (context.mounted) {
+                        AppSnackbar.show(
+                          context,
+                          message: AppStrings.loginFailed,
+                          type: SnackbarType.error,
+                        );
                       }
                     });
                   }

@@ -1,6 +1,7 @@
 class AttendanceLogEntry {
   final String id;
   final String date;
+  final String rawDate;
   final String fullDate;
   final String workingHours;
   final String checkIn;
@@ -13,6 +14,7 @@ class AttendanceLogEntry {
   AttendanceLogEntry({
     required this.id,
     required this.date,
+    required this.rawDate,
     required this.fullDate,
     required this.workingHours,
     required this.checkIn,

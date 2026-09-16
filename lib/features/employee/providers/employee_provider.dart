@@ -34,15 +34,15 @@ final employeeProvider = Provider<List<EmployeeModel>>((ref) {
   final filterState = ref.watch(employeeFilterProvider);
 
   return allEmployees.where((employee) {
-    // 1. Search Query
+
     final matchesSearch = employee.name.toLowerCase().contains(searchQuery) ||
                           employee.role.toLowerCase().contains(searchQuery);
 
-    // 2. Location Filter
+
     final matchesLocation = filterState.selectedLocations.isEmpty ||
                             filterState.selectedLocations.contains(employee.location);
 
-    // 3. Role Filter
+
     final matchesRole = filterState.selectedRoles.isEmpty ||
                         filterState.selectedRoles.contains(employee.role);
 

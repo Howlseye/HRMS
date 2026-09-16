@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../repositories/auth_repository.dart';
+import 'auth_session_provider.dart';
 
 class RememberMeNotifier extends Notifier<bool> {
   @override
@@ -32,8 +34,17 @@ class AuthController {
 
   Future<void> login(String email, String password) async {
     _ref.read(authLoadingProvider.notifier).setLoading(true);
-    await Future.delayed(const Duration(seconds: 2));
-    _ref.read(authLoadingProvider.notifier).setLoading(false);
+    try {
+      final repository = _ref.read(authRepositoryProvider);
+      final rememberMe = _ref.read(rememberMeProvider);
+      
+      final sessionData = await repository.login(email, password, rememberMe);
+      _ref.read(authSessionProvider.notifier).setSession(sessionData);
+    } catch (e) {
+      rethrow;
+    } finally {
+      _ref.read(authLoadingProvider.notifier).setLoading(false);
+    }
   }
 
   Future<void> sendResetEmail(String email) async {
@@ -43,6 +54,9 @@ class AuthController {
   }
 
   Future<void> logout() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    final repository = _ref.read(authRepositoryProvider);
+    await repository.logout();
+    _ref.read(authSessionProvider.notifier).clearSession();
   }
 }
+

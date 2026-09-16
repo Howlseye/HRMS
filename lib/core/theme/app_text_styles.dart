@@ -24,6 +24,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w900,
   );
 
+  static const TextStyle displayMediumBold = TextStyle(
+    fontFamily: fontFamilySecondary,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+  );
+
   static const TextStyle heading = TextStyle(
     fontFamily: fontFamilySecondary,
     fontSize: 20,
@@ -52,6 +58,12 @@ class AppTextStyles {
     fontFamily: fontFamilyPrimary,
     fontSize: 16,
     fontWeight: FontWeight.w500,
+  );
+
+  static const TextStyle titleSemiBold = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
   );
 
   static const TextStyle titleSmall = TextStyle(

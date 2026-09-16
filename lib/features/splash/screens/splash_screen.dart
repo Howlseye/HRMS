@@ -3,6 +3,7 @@ import 'package:absensi/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,8 +22,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigateToNext() async {
     await Future.delayed(const Duration(seconds: 3));
-    if (mounted) {
-      context.go('/login');
+    if (!mounted) return;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!mounted) return;
+      final sid = prefs.getString('sid');
+      final isRememberMe = prefs.getBool('is_remember_me') ?? false;
+
+      if (sid != null && sid.isNotEmpty && isRememberMe) {
+        context.go('/main');
+      } else {
+        context.go('/login');
+      }
+    } catch (e) {
+      if (mounted) {
+        context.go('/login');
+      }
     }
   }
 

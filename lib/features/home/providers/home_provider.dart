@@ -1,29 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_colors.dart';
 import '../models/activity_model.dart';
 import '../models/announcement_model.dart';
 
-final activityProvider = Provider<List<ActivityModel>>((ref) {
-  return [
-    ActivityModel(
-      icon: Icons.login,
-      title: 'Check In',
-      date: 'June 24, 2024',
-      time: '07:59',
-    ),
-    ActivityModel(
-      icon: Icons.logout,
-      title: 'Check Out',
-      date: 'June 24, 2024',
-      time: '16:30',
-      iconColor: AppColors.iconGray,
-      iconBgColor: AppColors.menuBgGray,
-      isTimeWarning: true,
-    ),
-  ];
-});
+import '../repositories/activity_repository.dart';
 
+final activityProvider = FutureProvider<List<ActivityModel>>((ref) async {
+  final repository = ref.watch(activityRepositoryProvider);
+  return await repository.getTodayActivities();
+});
 final announcementProvider = Provider<List<AnnouncementModel>>((ref) {
   return [
     AnnouncementModel(

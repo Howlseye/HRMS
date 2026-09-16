@@ -33,14 +33,12 @@ class EmployeeScreen extends ConsumerWidget {
                       text: '${AppStrings.menuEmployee} ',
                       style: AppTextStyles.headingExtraBold.copyWith(
                         color: AppColors.textPrimary,
-                        fontSize: 20,
                       ),
                       children: [
                         TextSpan(
                           text: '(${employees.length})',
                           style: AppTextStyles.headingExtraBold.copyWith(
                             color: AppColors.primaryBlueStart,
-                            fontSize: 20,
                           ),
                         ),
                       ],
@@ -111,18 +109,28 @@ class EmployeeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                itemCount: employees.length,
-                itemBuilder: (context, index) {
-                  final employee = employees[index];
-                  return EmployeeCard(
-                    employee: employee,
-                    onTap: () {
-                      context.push('/employee-detail', extra: employee);
-                    },
-                  );
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(employeeProvider);
+                  await Future.delayed(const Duration(seconds: 1));
                 },
+                color: AppColors.primaryBlueStart,
+                backgroundColor: AppColors.bgWhite,
+                child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(24.0),
+                  itemCount: employees.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final employee = employees[index];
+                    return EmployeeCard(
+                      employee: employee,
+                      onTap: () {
+                        context.push('/employee-detail', extra: employee);
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

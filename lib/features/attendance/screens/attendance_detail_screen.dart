@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../models/attendance_log_entry.dart';
+import '../providers/attendance_log_provider.dart';
 
-class AttendanceDetailScreen extends StatelessWidget {
+class AttendanceDetailScreen extends ConsumerWidget {
   final AttendanceLogEntry logEntry;
 
   const AttendanceDetailScreen({
@@ -15,7 +17,9 @@ class AttendanceDetailScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final detailAsync = ref.watch(attendanceDetailProvider(logEntry));
+
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       appBar: AppBar(
@@ -73,18 +77,48 @@ class AttendanceDetailScreen extends StatelessWidget {
                   valueColor: logEntry.isEarlyOut ? AppColors.textDanger : AppColors.textPrimary,
                 ),
                 const SizedBox(height: 16),
-                _buildDetailField(
-                  label: AppStrings.reasonLate,
-                  value: logEntry.lateReason ?? AppStrings.notLate,
-                  isBoxed: true,
-                  isPlaceholder: logEntry.lateReason == null,
-                ),
-                const SizedBox(height: 16),
-                _buildDetailField(
-                  label: AppStrings.reasonEarlyOut,
-                  value: logEntry.earlyOutReason ?? AppStrings.notEarlyOut,
-                  isBoxed: true,
-                  isPlaceholder: logEntry.earlyOutReason == null,
+                
+                detailAsync.when(
+                  data: (reasons) {
+                    final lateReason = logEntry.isLate 
+                        ? (reasons['lateReason'] != null && reasons['lateReason']!.isNotEmpty ? reasons['lateReason']! : AppStrings.noReason)
+                        : AppStrings.notLate;
+                        
+                    final earlyOutReason = logEntry.isEarlyOut
+                        ? (reasons['earlyOutReason'] != null && reasons['earlyOutReason']!.isNotEmpty ? reasons['earlyOutReason']! : AppStrings.noReason)
+                        : AppStrings.notEarlyOut;
+
+                    return Column(
+                      children: [
+                        _buildDetailField(
+                          label: AppStrings.reasonLate,
+                          value: lateReason,
+                          isBoxed: true,
+                          isPlaceholder: lateReason == AppStrings.noReason || lateReason == AppStrings.notLate,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildDetailField(
+                          label: AppStrings.reasonEarlyOut,
+                          value: earlyOutReason,
+                          isBoxed: true,
+                          isPlaceholder: earlyOutReason == AppStrings.noReason || earlyOutReason == AppStrings.notEarlyOut,
+                        ),
+                      ],
+                    );
+                  },
+                  loading: () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (error, stack) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: Center(
+                      child: Text(
+                        AppStrings.errorLoadData,
+                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDanger),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
