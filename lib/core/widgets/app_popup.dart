@@ -10,6 +10,7 @@ class AppPopup extends StatelessWidget {
   final String description;
   final String primaryButtonText;
   final String secondaryButtonText;
+  final Color primaryButtonColor;
   final VoidCallback onPrimaryPressed;
   final VoidCallback onSecondaryPressed;
 
@@ -21,6 +22,7 @@ class AppPopup extends StatelessWidget {
     required this.description,
     required this.primaryButtonText,
     required this.secondaryButtonText,
+    this.primaryButtonColor = AppColors.primaryBlueStart,
     required this.onPrimaryPressed,
     required this.onSecondaryPressed,
   });
@@ -98,7 +100,7 @@ class AppPopup extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onPrimaryPressed,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlueStart,
+                      backgroundColor: primaryButtonColor,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       elevation: 0,
                       shape: RoundedRectangleBorder(

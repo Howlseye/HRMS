@@ -64,8 +64,8 @@ class AttendanceSuccessScreen extends StatelessWidget {
         ),
       ),
       buttonText: AppStrings.back,
-      onButtonPressed: () => context.go('/main'),
-      onClosePressed: () => context.go('/main'),
+      onButtonPressed: () => context.pop(),
+      onClosePressed: () => context.pop(),
     );
   }
 }

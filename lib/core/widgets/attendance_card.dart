@@ -187,7 +187,7 @@ class AttendanceCard extends ConsumerWidget {
                               Navigator.of(context).pop();
                             }
                             if (context.mounted) {
-                              context.go('/attendance-success', extra: {
+                              context.push('/attendance-success', extra: {
                                 'isCheckIn': true,
                                 'date': _formatDate(),
                                 'timeRange': '${AppStrings.workHoursPrefix}$startTime – $endTime',
@@ -212,7 +212,7 @@ class AttendanceCard extends ConsumerWidget {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
+                            backgroundColor: AppColors.transparent,
                             builder: (context) => PresenceNoteBottomSheet(
                               isCheckIn: true,
                               timeLimit: startTime,
@@ -247,7 +247,7 @@ class AttendanceCard extends ConsumerWidget {
                               Navigator.of(context).pop();
                             }
                             if (context.mounted) {
-                              context.go('/attendance-success', extra: {
+                              context.push('/attendance-success', extra: {
                                 'isCheckIn': false,
                                 'date': _formatDate(),
                                 'timeRange': '${AppStrings.workHoursPrefix}$startTime – $endTime',
@@ -272,7 +272,7 @@ class AttendanceCard extends ConsumerWidget {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
+                            backgroundColor: AppColors.transparent,
                             builder: (context) => PresenceNoteBottomSheet(
                               isCheckIn: false,
                               timeLimit: endTime,

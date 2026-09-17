@@ -36,10 +36,8 @@ class AppStrings {
   
   static const String menuAbsensi = 'Absensi';
   static const String menuReimburse = 'Reimburse';
-  static const String menuLembur = 'Lembur';
   static const String menuCuti = 'Cuti';
-  static const String menuSlipGaji = 'Slip Gaji';
-  static const String menuLogBook = 'Log Book';
+  static const String menuPengumuman = 'Pengumuman';
   static const String menuAll = 'Semua';
 
   // Attendance Screen
@@ -129,6 +127,9 @@ class AppStrings {
   static const String popupMarkAllReadDesc = 'Apakah Anda yakin ingin menandai semua inbox sebagai sudah dibaca? Tindakan ini tidak dapat dibatalkan.';
   static const String popupConfirm = 'Konfirmasi';
   static const String popupCancel = 'Batal';
+  static const String popupCancelLeaveTitle = 'Batalkan Pengajuan?';
+  static const String popupCancelLeaveDesc = 'Pengajuan cuti yang dibatalkan tidak dapat diproses lebih lanjut. Pastikan Anda ingin membatalkan pengajuan ini.';
+  static const String popupCancelLeaveConfirm = 'Batalkan';
 
   // Error Messages
   static const String errorServerSide = 'Server Side Error';
@@ -156,24 +157,12 @@ class AppStrings {
   // Leave Screen
   static const String leaveTitle = 'Pengajuan Cuti';
   static const String remainingYearlyLeave = 'Sisa Cuti Tahunan';
-  static const String dummyLeaveDays = '8 hari';
-  static const String dummyLeaveFilter = 'Agustus 2022';
   static const String noLeaveRequest = 'Belum ada pengajuan';
   static const String noLeaveRequestSub = 'Anda dapat mengajukan melalui\ntombol di bawah ini';
 
   static const String leaveType = 'Jenis Cuti';
   static const String leaveDate = 'Tanggal';
-  static const String dummyLeaveTitle1 = 'HR-LAP-2026-234';
-  static const String dummyLeaveTitle2 = 'HR-LAP-2026-178';
-  static const String dummyLeaveTitle3 = 'HR-LAP-2026-155';
-  static const String dummyLeaveDate1 = '1 Aug 2026';
-  static const String dummyLeaveDate2 = '21 Jun 2026';
-  static const String dummyLeaveDate3 = '4 Feb 2026';
-  static const String dummyLeaveRange1 = '1 Sep - 3 Sep 2026';
-  static const String dummyLeaveRange2 = '12 Aug - 14 Aug 2026';
-  static const String dummyLeaveRange3 = '23 Jun - 27 Jun 2026';
-  static const String dummyLeaveTypeYearly = 'Cuti Tahunan';
-  static const String dummyLeaveTypeMarriage = 'Cuti Menikah';
+
 
   // Detail Leave Screen
   static const String detailLeaveTitle = 'Detail Pengajuan Cuti';
@@ -186,6 +175,8 @@ class AppStrings {
   static const String leaveReason = 'Alasan Cuti';
   static const String leaveRejectReason = 'Alasan Ditolak';
   static const String cancelLeave = 'Batalkan Pengajuan';
+  static const String statusCancelled = 'Cancelled';
+  static const String leaveCancelled = 'Pengajuan Dibatalkan';
   // New Leave Screen
   static const String newLeaveTitle = 'Pengajuan Cuti Baru';
   static const String leaveTypeLabel = 'Jenis Cuti';
@@ -193,6 +184,8 @@ class AppStrings {
   static const String selectLeaveType = 'Pilih jenis cuti';
   static const String selectStartDate = 'Pilih tanggal mulai';
   static const String selectEndDate = 'Pilih tanggal selesai';
+  static const String errorSelectLeaveTypeFirst = 'Pilih jenis cuti dahulu';
+  static const String errorSelectStartDateFirst = 'Pilih tanggal mulai dahulu';
   static const String explainLeaveReason = 'Jelaskan alasan cuti';
   static const String submit = 'Kirim';
   static const String cancel = 'Batal';
@@ -204,14 +197,6 @@ class AppStrings {
   static const String submissionSuccess = 'Pengajuan Berhasil';
   static const String submissionSuccessDesc = 'Pengajuan cuti Anda berhasil dikirim dan sedang menunggu proses persetujuan.';
   static const String viewSubmission = 'Lihat Pengajuan';
-  static const String leaveTypeAnnual = 'Cuti Tahunan';
-  static const String leaveTypeSick = 'Cuti Sakit';
-  static const String leaveTypeMaternity = 'Cuti Melahirkan';
 
-  // Dummy Data
-  static const String dummyLeaveReason = 'Liburan dan ada acara keluarga di luar kota';
-  static const String dummyLeaveRejectReason = 'Mohon lampirkan approval yang sesuai dengan detail cuti diajukan';
-  static const String dummyLeaveStartDate1 = '1 Sep 2026';
-  static const String dummyLeaveStartDate2 = '12 Aug 2026';
-  static const String dummyLeaveStartDate3 = '23 Jun 2026';
+
 }

@@ -3,7 +3,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 
-enum LeaveStatus { waiting, approved, rejected }
+enum LeaveStatus { waiting, approved, rejected, cancelled }
 
 class LeaveCard extends StatelessWidget {
   final String title;
@@ -30,6 +30,7 @@ class LeaveCard extends StatelessWidget {
       case LeaveStatus.approved:
         return AppColors.textSuccess;
       case LeaveStatus.rejected:
+      case LeaveStatus.cancelled:
         return AppColors.textDanger;
     }
   }
@@ -41,6 +42,7 @@ class LeaveCard extends StatelessWidget {
       case LeaveStatus.approved:
         return AppColors.menuBgGreen;
       case LeaveStatus.rejected:
+      case LeaveStatus.cancelled:
         return AppColors.menuBgPink;
     }
   }
@@ -53,6 +55,8 @@ class LeaveCard extends StatelessWidget {
         return AppStrings.statusApproved;
       case LeaveStatus.rejected:
         return AppStrings.statusRejected;
+      case LeaveStatus.cancelled:
+        return AppStrings.statusCancelled;
     }
   }
 

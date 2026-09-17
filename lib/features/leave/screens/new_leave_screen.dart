@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+import '../providers/leave_allocation_provider.dart';
+import '../providers/leave_provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
@@ -8,25 +12,20 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_dropdown_field.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../repositories/leave_repository.dart';
 
-class NewLeaveScreen extends StatefulWidget {
+class NewLeaveScreen extends ConsumerStatefulWidget {
   const NewLeaveScreen({super.key});
 
   @override
-  State<NewLeaveScreen> createState() => _NewLeaveScreenState();
+  ConsumerState<NewLeaveScreen> createState() => _NewLeaveScreenState();
 }
 
-class _NewLeaveScreenState extends State<NewLeaveScreen> {
+class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
   String? _selectedLeaveType;
   DateTime? _startDate;
   DateTime? _endDate;
   final TextEditingController _reasonController = TextEditingController();
-
-  final List<String> _leaveTypes = [
-    AppStrings.leaveTypeAnnual,
-    AppStrings.leaveTypeSick,
-    AppStrings.leaveTypeMaternity,
-  ];
 
   @override
   void initState() {
@@ -55,15 +54,36 @@ class _NewLeaveScreenState extends State<NewLeaveScreen> {
   }
 
   Future<void> _selectDate(BuildContext context, bool isStart) async {
+    if (isStart && _selectedLeaveType == null) return;
+    if (!isStart && _startDate == null) return;
+
     final DateTime now = DateTime.now();
     final DateTime first = isStart ? now : (_startDate ?? now);
+    
+    DateTime maxDate = DateTime(2101);
+    if (!isStart && _startDate != null && _selectedLeaveType != null) {
+      final response = ref.read(leaveAllocationProvider).value;
+      if (response != null) {
+        final selectedAlloc = response.leaveAllocation[_selectedLeaveType];
+        if (selectedAlloc != null) {
+          final remaining = selectedAlloc.remainingLeaves.toInt();
+          if (remaining > 0) {
+            maxDate = _startDate!.add(Duration(days: remaining - 1));
+          } else {
+            maxDate = _startDate!;
+          }
+        }
+      }
+    }
+    
     final DateTime initial = isStart ? (_startDate ?? now) : (_endDate ?? _startDate ?? now);
+    final DateTime validInitial = initial.isAfter(maxDate) ? maxDate : (initial.isBefore(first) ? first : initial);
 
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initial,
+      initialDate: validInitial,
       firstDate: first,
-      lastDate: DateTime(2101),
+      lastDate: maxDate,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -75,7 +95,7 @@ class _NewLeaveScreenState extends State<NewLeaveScreen> {
             ),
             datePickerTheme: DatePickerThemeData(
               backgroundColor: AppColors.bgWhite,
-              surfaceTintColor: Colors.transparent,
+              surfaceTintColor: AppColors.transparent,
               headerBackgroundColor: AppColors.bgWhite,
               weekdayStyle: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
@@ -96,6 +116,7 @@ class _NewLeaveScreenState extends State<NewLeaveScreen> {
       setState(() {
         if (isStart) {
           _startDate = picked;
+          _endDate = null; // Reset end date when start date changes
         } else {
           _endDate = picked;
         }
@@ -105,10 +126,17 @@ class _NewLeaveScreenState extends State<NewLeaveScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final leaveAllocationsAsync = ref.watch(leaveAllocationProvider);
+    final List<String> leaveTypes = leaveAllocationsAsync.when(
+      data: (response) => response.leaveAllocation.keys.toList(),
+      loading: () => [],
+      error: (_, __) => [],
+    );
+
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         centerTitle: true,
         title: Text(
@@ -141,17 +169,22 @@ class _NewLeaveScreenState extends State<NewLeaveScreen> {
                       hintText: AppStrings.selectLeaveType,
                       isRequired: true,
                       value: _selectedLeaveType,
-                      items: _leaveTypes,
+                      items: leaveTypes,
                       onChanged: (value) {
                         setState(() {
                           _selectedLeaveType = value;
+                          _endDate = null; // Reset end date when leave type changes
                         });
                       },
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       label: AppStrings.leaveStartDate,
-                      hintText: _startDate != null ? _formatDate(_startDate) : AppStrings.selectStartDate,
+                      hintText: _startDate != null 
+                          ? _formatDate(_startDate) 
+                          : (_selectedLeaveType == null 
+                              ? AppStrings.errorSelectLeaveTypeFirst 
+                              : AppStrings.selectStartDate),
                       isRequired: true,
                       readOnly: true,
                       onTap: () => _selectDate(context, true),
@@ -166,7 +199,11 @@ class _NewLeaveScreenState extends State<NewLeaveScreen> {
                     const SizedBox(height: 16),
                     CustomTextField(
                       label: AppStrings.leaveEndDate,
-                      hintText: _endDate != null ? _formatDate(_endDate) : AppStrings.selectEndDate,
+                      hintText: _endDate != null 
+                          ? _formatDate(_endDate) 
+                          : (_startDate == null 
+                              ? AppStrings.errorSelectStartDateFirst 
+                              : AppStrings.selectEndDate),
                       isRequired: true,
                       readOnly: true,
                       onTap: () => _selectDate(context, false),
@@ -232,74 +269,112 @@ class _NewLeaveScreenState extends State<NewLeaveScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 16),
-                Container(
-                  width: 32,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.textTertiary,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  AppStrings.confirmLeave,
-                  style: AppTextStyles.titleBold.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: AppColors.bgWhite,
-                    border: Border.all(color: AppColors.menuBgGray),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildConfirmationRow(AppStrings.leaveTypeLabel, _selectedLeaveType ?? ''),
-                      const Divider(color: AppColors.menuBgGray, height: 1),
-                      _buildConfirmationRow(AppStrings.leaveStartDate, _formatDate(_startDate)),
-                      const Divider(color: AppColors.menuBgGray, height: 1),
-                      _buildConfirmationRow(AppStrings.leaveEndDate, _formatDate(_endDate)),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    AppStrings.ensureDataCorrect,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textTertiary,
+        bool isSubmitting = false;
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 16),
+                    Container(
+                      width: 32,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.textTertiary,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: CustomButton(
-                      text: AppStrings.submitNow,
-                      onPressed: () {
-                        context.pop();
-                        context.go('/leave/success');
-                      },
+                    const SizedBox(height: 24),
+                    Text(
+                      AppStrings.confirmLeave,
+                      style: AppTextStyles.titleBold.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppColors.bgWhite,
+                        border: Border.all(color: AppColors.menuBgGray),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildConfirmationRow(AppStrings.leaveTypeLabel, _selectedLeaveType ?? ''),
+                          const Divider(color: AppColors.menuBgGray, height: 1),
+                          _buildConfirmationRow(AppStrings.leaveStartDate, _formatDate(_startDate)),
+                          const Divider(color: AppColors.menuBgGray, height: 1),
+                          _buildConfirmationRow(AppStrings.leaveEndDate, _formatDate(_endDate)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        AppStrings.ensureDataCorrect,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: CustomButton(
+                          text: AppStrings.submitNow,
+                          isLoading: isSubmitting,
+                          onPressed: () async {
+                            setModalState(() => isSubmitting = true);
+                            try {
+                              final repository = ref.read(leaveRepositoryProvider);
+                              final leaveAllocations = ref.read(leaveAllocationProvider).value;
+                              
+                              final fromDate = DateFormat('yyyy-MM-dd').format(_startDate!);
+                              final toDate = DateFormat('yyyy-MM-dd').format(_endDate!);
+                              
+                              await repository.createLeave(
+                                leaveType: _selectedLeaveType!,
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                description: _reasonController.text,
+                                leaveApprover: leaveAllocations?.leaveApprover ?? '',
+                              );
+                              
+                              if (context.mounted) {
+                                ref.invalidate(leaveProvider);
+                                ref.invalidate(leaveAllocationProvider);
+                                context.pop(); // Close bottom sheet
+                                context.pushReplacement('/leave/success');
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                setModalState(() => isSubmitting = false);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString().replaceAll('Exception: ', '')),
+                                    backgroundColor: AppColors.textDanger,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

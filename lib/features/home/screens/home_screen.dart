@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../providers/home_provider.dart';
 import '../widgets/home_header.dart';
 import '../../../core/widgets/attendance_card.dart';
@@ -50,15 +51,13 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
           ),
-          data: (employee) => RefreshIndicator(
+          data: (employee) => CustomRefreshIndicator(
             onRefresh: () async {
               ref.invalidate(currentEmployeeProvider);
               ref.invalidate(currentShiftProvider);
               ref.invalidate(activityProvider);
               await Future.delayed(const Duration(seconds: 1));
             },
-            color: AppColors.primaryBlueStart,
-            backgroundColor: AppColors.bgWhite,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(

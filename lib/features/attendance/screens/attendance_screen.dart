@@ -6,6 +6,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/attendance_activity_card.dart';
 import '../../../core/widgets/attendance_card.dart';
+import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../providers/attendance_provider.dart';
 
 class AttendanceScreen extends ConsumerWidget {
@@ -87,13 +88,11 @@ class AttendanceScreen extends ConsumerWidget {
                     ),
                   ),
                   Expanded(
-                    child: RefreshIndicator(
+                    child: CustomRefreshIndicator(
                       onRefresh: () async {
                         ref.invalidate(attendanceHistoryProvider);
                         await Future.delayed(const Duration(seconds: 1));
                       },
-                      color: AppColors.primaryBlueStart,
-                      backgroundColor: AppColors.bgWhite,
                       child: historyAsync.when(
                         data: (history) => SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),

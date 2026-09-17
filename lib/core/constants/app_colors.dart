@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
+  static const Color transparent = Colors.transparent;
+  
   static const Color primaryBlueStart = Color(0xFF0078D7);
   static const Color primaryBlueEnd = Color(0xFF0060AC);
   static const Color accentNeonGreen = Color(0xFF2CFFAE);

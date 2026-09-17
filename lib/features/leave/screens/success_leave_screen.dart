@@ -21,8 +21,8 @@ class SuccessLeaveScreen extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
       buttonText: AppStrings.viewSubmission,
-      onButtonPressed: () => context.go('/leave'),
-      onClosePressed: () => context.go('/leave'),
+      onButtonPressed: () => context.pop(),
+      onClosePressed: () => context.pop(),
     );
   }
 }

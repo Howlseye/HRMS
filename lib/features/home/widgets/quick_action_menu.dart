@@ -10,10 +10,10 @@ class QuickActionMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildMenuItem(
@@ -24,21 +24,12 @@ class QuickActionMenu extends StatelessWidget {
               context.push('/attendance');
             },
           ),
-          const SizedBox(width: 24),
           _buildMenuItem(
             icon: 'assets/icons/reimburse_icon.png',
             label: AppStrings.menuReimburse,
             backgroundColor: AppColors.menuBgGreen,
             onTap: () {},
           ),
-          const SizedBox(width: 24),
-          _buildMenuItem(
-            icon: 'assets/icons/lembur_icon.png',
-            label: AppStrings.menuLembur,
-            backgroundColor: AppColors.menuBgYellow,
-            onTap: () {},
-          ),
-          const SizedBox(width: 24),
           _buildMenuItem(
             icon: 'assets/icons/cuti_icon.png',
             label: AppStrings.menuCuti,
@@ -47,18 +38,10 @@ class QuickActionMenu extends StatelessWidget {
               context.push('/leave');
             },
           ),
-          const SizedBox(width: 24),
           _buildMenuItem(
-            icon: 'assets/icons/slip_gaji_icon.png',
-            label: AppStrings.menuSlipGaji,
-            backgroundColor: AppColors.menuBgLavender,
-            onTap: () {},
-          ),
-          const SizedBox(width: 24),
-          _buildMenuItem(
-            icon: 'assets/icons/log_book_icon.png',
-            label: AppStrings.menuLogBook,
-            backgroundColor: AppColors.menuBgPeach,
+            icon: 'assets/icons/pengumuman_icon.png',
+            label: AppStrings.menuPengumuman,
+            backgroundColor: AppColors.menuBgYellow,
             onTap: () {},
           ),
         ],

@@ -4,7 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/app_popup.dart';
+import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../widgets/leave_card.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../repositories/leave_repository.dart';
+import '../providers/leave_provider.dart';
 
 class LeaveDetailArgs {
   final String title;
@@ -26,7 +31,7 @@ class LeaveDetailArgs {
   });
 }
 
-class LeaveDetailScreen extends StatelessWidget {
+class LeaveDetailScreen extends ConsumerWidget {
   final LeaveDetailArgs args;
 
   const LeaveDetailScreen({super.key, required this.args});
@@ -39,6 +44,8 @@ class LeaveDetailScreen extends StatelessWidget {
         return AppStrings.statusApproved;
       case LeaveStatus.rejected:
         return AppStrings.statusRejected;
+      case LeaveStatus.cancelled:
+        return AppStrings.statusCancelled;
     }
   }
 
@@ -49,6 +56,7 @@ class LeaveDetailScreen extends StatelessWidget {
       case LeaveStatus.approved:
         return AppColors.textSuccess;
       case LeaveStatus.rejected:
+      case LeaveStatus.cancelled:
         return AppColors.textDanger;
     }
   }
@@ -60,6 +68,7 @@ class LeaveDetailScreen extends StatelessWidget {
       case LeaveStatus.approved:
         return AppColors.menuBgGreen;
       case LeaveStatus.rejected:
+      case LeaveStatus.cancelled:
         return AppColors.menuBgPink;
     }
   }
@@ -71,6 +80,7 @@ class LeaveDetailScreen extends StatelessWidget {
       case LeaveStatus.approved:
         return Icons.check_circle_outline;
       case LeaveStatus.rejected:
+      case LeaveStatus.cancelled:
         return Icons.error_outline;
     }
   }
@@ -83,11 +93,13 @@ class LeaveDetailScreen extends StatelessWidget {
         return AppStrings.leaveApproved;
       case LeaveStatus.rejected:
         return AppStrings.leaveRejected;
+      case LeaveStatus.cancelled:
+        return AppStrings.leaveCancelled;
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       appBar: AppBar(
@@ -106,10 +118,17 @@ class LeaveDetailScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-          children: [
+        child: CustomRefreshIndicator(
+          onRefresh: () => ref.refresh(leaveProvider.future),
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
               decoration: BoxDecoration(
@@ -177,7 +196,38 @@ class LeaveDetailScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 40,
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AppPopup(
+                        svgAsset: 'assets/icons/popup_cancel_icon.svg',
+                        title: AppStrings.popupCancelLeaveTitle,
+                        description: AppStrings.popupCancelLeaveDesc,
+                        primaryButtonText: AppStrings.popupCancelLeaveConfirm,
+                        secondaryButtonText: AppStrings.popupCancel,
+                        primaryButtonColor: AppColors.textDanger,
+                        onPrimaryPressed: () async {
+                          Navigator.pop(context); // close popup
+                          try {
+                            await ref.read(leaveRepositoryProvider).cancelLeave(args.title);
+                            ref.invalidate(leaveProvider);
+                            if (context.mounted) {
+                              context.pop(); // close detail screen
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(e.toString())),
+                              );
+                            }
+                          }
+                        },
+                        onSecondaryPressed: () {
+                          Navigator.pop(context); // close popup
+                        },
+                      ),
+                    );
+                  },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: AppColors.textDanger),
                     shape: RoundedRectangleBorder(
@@ -192,9 +242,14 @@ class LeaveDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
-      )),
+      ),
+      ],
+      ),
+      ),
+      ),
     );
   }
 
