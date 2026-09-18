@@ -9,8 +9,10 @@ import '../providers/leave_provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_dropdown_field.dart';
 import '../../../core/widgets/custom_text_field.dart';
+import '../../../core/widgets/custom_date_picker_field.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../repositories/leave_repository.dart';
 
@@ -53,75 +55,32 @@ class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
     return DateFormat('d MMM yyyy').format(date);
   }
 
-  Future<void> _selectDate(BuildContext context, bool isStart) async {
-    if (isStart && _selectedLeaveType == null) return;
-    if (!isStart && _startDate == null) return;
+  Future<bool> _onBeforeStartTap() async {
+    if (_selectedLeaveType == null) return false;
+    return true;
+  }
 
-    final DateTime now = DateTime.now();
-    final DateTime first = isStart ? now : (_startDate ?? now);
-    
-    DateTime maxDate = DateTime(2101);
-    if (!isStart && _startDate != null && _selectedLeaveType != null) {
+  Future<bool> _onBeforeEndTap() async {
+    if (_startDate == null) return false;
+    return true;
+  }
+
+  DateTime? _getMaxEndDate() {
+    if (_startDate != null && _selectedLeaveType != null) {
       final response = ref.read(leaveAllocationProvider).value;
       if (response != null) {
         final selectedAlloc = response.leaveAllocation[_selectedLeaveType];
         if (selectedAlloc != null) {
           final remaining = selectedAlloc.remainingLeaves.toInt();
           if (remaining > 0) {
-            maxDate = _startDate!.add(Duration(days: remaining - 1));
+            return _startDate!.add(Duration(days: remaining - 1));
           } else {
-            maxDate = _startDate!;
+            return _startDate!;
           }
         }
       }
     }
-    
-    final DateTime initial = isStart ? (_startDate ?? now) : (_endDate ?? _startDate ?? now);
-    final DateTime validInitial = initial.isAfter(maxDate) ? maxDate : (initial.isBefore(first) ? first : initial);
-
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: validInitial,
-      firstDate: first,
-      lastDate: maxDate,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppColors.primaryBlueStart,
-              onPrimary: AppColors.textWhite,
-              onSurface: AppColors.textPrimary,
-              surface: AppColors.bgWhite,
-            ),
-            datePickerTheme: DatePickerThemeData(
-              backgroundColor: AppColors.bgWhite,
-              surfaceTintColor: AppColors.transparent,
-              headerBackgroundColor: AppColors.bgWhite,
-              weekdayStyle: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primaryBlueStart,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        if (isStart) {
-          _startDate = picked;
-          _endDate = null; // Reset end date when start date changes
-        } else {
-          _endDate = picked;
-        }
-      });
-    }
+    return DateTime(2101);
   }
 
   @override
@@ -135,20 +94,12 @@ class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          AppStrings.newLeaveTitle,
-          style: AppTextStyles.headingSmall.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      appBar: CustomAppBar(
+        title: AppStrings.newLeaveTitle,
+        titleStyle: AppTextStyles.headingSmall.copyWith(
+          color: AppColors.textPrimary,
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+        iconColor: AppColors.textPrimary,
       ),
       body: Column(
         children: [
@@ -178,42 +129,38 @@ class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    CustomTextField(
+                    CustomDatePickerField(
                       label: AppStrings.leaveStartDate,
-                      hintText: _startDate != null 
-                          ? _formatDate(_startDate) 
-                          : (_selectedLeaveType == null 
-                              ? AppStrings.errorSelectLeaveTypeFirst 
-                              : AppStrings.selectStartDate),
+                      hintText: _selectedLeaveType == null 
+                          ? AppStrings.errorSelectLeaveTypeFirst 
+                          : AppStrings.selectStartDate,
                       isRequired: true,
-                      readOnly: true,
-                      onTap: () => _selectDate(context, true),
-                      suffixIcon: const Icon(
-                        Icons.date_range,
-                        color: AppColors.iconDisabled,
-                      ),
-                      controller: TextEditingController(
-                        text: _startDate != null ? _formatDate(_startDate) : null,
-                      ),
+                      value: _startDate,
+                      firstDate: DateTime.now(),
+                      onBeforeTap: _onBeforeStartTap,
+                      onChanged: (date) {
+                        setState(() {
+                          _startDate = date;
+                          _endDate = null; // Reset end date when start date changes
+                        });
+                      },
                     ),
                     const SizedBox(height: 16),
-                    CustomTextField(
+                    CustomDatePickerField(
                       label: AppStrings.leaveEndDate,
-                      hintText: _endDate != null 
-                          ? _formatDate(_endDate) 
-                          : (_startDate == null 
-                              ? AppStrings.errorSelectStartDateFirst 
-                              : AppStrings.selectEndDate),
+                      hintText: _startDate == null 
+                          ? AppStrings.errorSelectStartDateFirst 
+                          : AppStrings.selectEndDate,
                       isRequired: true,
-                      readOnly: true,
-                      onTap: () => _selectDate(context, false),
-                      suffixIcon: const Icon(
-                        Icons.date_range,
-                        color: AppColors.iconDisabled,
-                      ),
-                      controller: TextEditingController(
-                        text: _endDate != null ? _formatDate(_endDate) : null,
-                      ),
+                      value: _endDate,
+                      firstDate: _startDate ?? DateTime.now(),
+                      lastDate: _getMaxEndDate(),
+                      onBeforeTap: _onBeforeEndTap,
+                      onChanged: (date) {
+                        setState(() {
+                          _endDate = date;
+                        });
+                      },
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(

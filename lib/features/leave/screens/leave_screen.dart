@@ -2,18 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_refresh_indicator.dart';
+import '../../../core/widgets/month_year_filter_bar.dart';
 import '../widgets/leave_card.dart';
 import 'leave_detail_screen.dart';
 import '../providers/leave_provider.dart';
 import '../providers/leave_allocation_provider.dart';
+import '../../../core/widgets/status_filter_bottom_sheet.dart';
 
-class LeaveScreen extends ConsumerWidget {
+class LeaveScreen extends ConsumerStatefulWidget {
   const LeaveScreen({super.key});
+
+  @override
+  ConsumerState<LeaveScreen> createState() => _LeaveScreenState();
+}
+
+class _LeaveScreenState extends ConsumerState<LeaveScreen> {
+  DateTime _filterDate = DateTime.now();
+  String _selectedStatus = AppStrings.allStatus;
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatusFilterBottomSheet(
+          initialStatus: _selectedStatus,
+          onStatusSelected: (status) {
+            setState(() {
+              _selectedStatus = status;
+            });
+          },
+        );
+      },
+    );
+  }
 
   LeaveStatus _mapStatus(String statusStr) {
     switch (statusStr) {
@@ -31,23 +61,15 @@ class LeaveScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          AppStrings.leaveTitle,
-          style: AppTextStyles.headingSmall.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      appBar: CustomAppBar(
+        title: AppStrings.leaveTitle,
+        titleStyle: AppTextStyles.headingSmall.copyWith(
+          color: AppColors.textPrimary,
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+        iconColor: AppColors.textPrimary,
       ),
       body: SafeArea(
         child: Padding(
@@ -109,138 +131,142 @@ class LeaveScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      decoration: BoxDecoration(
-                        color: AppColors.bgWhite,
-                        border: Border.all(color: AppColors.borderLight),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.calendar_today,
-                            color: AppColors.iconDisabled,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              DateFormat('MMMM yyyy', 'id_ID').format(DateTime.now()),
-                              style: AppTextStyles.title.copyWith(
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                          const Icon(
-                            Icons.expand_more,
-                            color: AppColors.iconDisabled,
-                            size: 24,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.bgWhite,
-                      border: Border.all(color: AppColors.borderLight),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Icon(
-                      Icons.filter_alt_outlined,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
+              MonthYearFilterBar(
+                selectedDate: _filterDate,
+                onDateChanged: (newDate) {
+                  setState(() {
+                    _filterDate = newDate;
+                  });
+                },
+                showFilterIcon: true,
+                onFilterTapped: _showFilterBottomSheet,
+                allowFutureMonths: true,
               ),
               const SizedBox(height: 16),
               Expanded(
                 child: ref.watch(leaveProvider).when(
                   data: (leaves) {
-                    if (leaves.isEmpty) {
+                    final filteredLeaves = leaves.where((leave) {
+                      try {
+                        final lDate = DateTime.parse(leave.fromDate);
+                        if (lDate.month != _filterDate.month || lDate.year != _filterDate.year) {
+                          return false;
+                        }
+                      } catch (_) {}
+
+                      if (_selectedStatus == AppStrings.allStatus) return true;
+                      
+                      final uiStatus = _mapStatus(leave.status);
+                      if (_selectedStatus == AppStrings.statusWaitingEnum && uiStatus == LeaveStatus.waiting) return true;
+                      if (_selectedStatus == AppStrings.statusApprovedEnum && uiStatus == LeaveStatus.approved) return true;
+                      if (_selectedStatus == AppStrings.statusRejectedEnum && uiStatus == LeaveStatus.rejected) return true;
+                      if (_selectedStatus == 'Dibatalkan' && uiStatus == LeaveStatus.cancelled) return true;
+                      
+                      return false;
+                    }).toList();
+
+                    if (filteredLeaves.isEmpty) {
                       return CustomRefreshIndicator(
                         onRefresh: () async {
                           ref.invalidate(leaveAllocationProvider);
                           await ref.refresh(leaveProvider.future);
                         },
-                        child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.5,
-                              child: Center(
-                                child: Text(
-                                  AppStrings.noLeaveRequest,
-                                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) => ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: [
+                              Container(
+                                height: constraints.maxHeight,
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/empty_data.svg',
+                                      width: 100,
+                                    ),
+                                    const SizedBox(height: 24),
+                                    Text(
+                                      AppStrings.noLeaveRequest,
+                                      style: AppTextStyles.titleBold.copyWith(
+                                        color: AppColors.textPrimary,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      AppStrings.noLeaveRequestSub,
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }
+
                     return CustomRefreshIndicator(
                       onRefresh: () async {
                         ref.invalidate(leaveAllocationProvider);
                         await ref.refresh(leaveProvider.future);
                       },
                       child: ListView.builder(
-                        itemCount: leaves.length,
+                        itemCount: filteredLeaves.length,
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
-                        final leave = leaves[index];
-                        final status = _mapStatus(leave.status);
-                        
-                        String statusDateStr = '-';
-                        if (leave.postingDate.isNotEmpty) {
-                          try {
-                            final pDate = DateTime.parse(leave.postingDate);
-                            statusDateStr = DateFormat('d MMM yyyy').format(pDate);
-                          } catch (_) {}
-                        }
+                          final leave = filteredLeaves[index];
+                          final status = _mapStatus(leave.status);
+                          
+                          String statusDateStr = '-';
+                          if (leave.postingDate.isNotEmpty) {
+                            try {
+                              final pDate = DateTime.parse(leave.postingDate);
+                              statusDateStr = DateFormat('d MMM yyyy').format(pDate);
+                            } catch (_) {}
+                          }
 
-                        String dateRangeStr = '-';
-                        String startDateStr = '-';
-                        if (leave.fromDate.isNotEmpty && leave.toDate.isNotEmpty) {
-                          try {
-                            final fDate = DateTime.parse(leave.fromDate);
-                            final tDate = DateTime.parse(leave.toDate);
-                            startDateStr = DateFormat('d MMM yyyy').format(fDate);
-                            dateRangeStr = '${DateFormat('d MMM').format(fDate)} - ${DateFormat('d MMM yyyy').format(tDate)}';
-                          } catch (_) {}
-                        }
+                          String dateRangeStr = '-';
+                          String startDateStr = '-';
+                          if (leave.fromDate.isNotEmpty && leave.toDate.isNotEmpty) {
+                            try {
+                              final fDate = DateTime.parse(leave.fromDate);
+                              final tDate = DateTime.parse(leave.toDate);
+                              startDateStr = DateFormat('d MMM yyyy').format(fDate);
+                              dateRangeStr = '${DateFormat('d MMM').format(fDate)} - ${DateFormat('d MMM yyyy').format(tDate)}';
+                            } catch (_) {}
+                          }
 
-                        return LeaveCard(
-                          title: leave.name.isNotEmpty ? leave.name : AppStrings.none,
-                          status: status,
-                          statusDate: statusDateStr,
-                          leaveType: leave.leaveType.isNotEmpty ? leave.leaveType : AppStrings.none,
-                          dateRange: dateRangeStr,
-                          onTap: () {
-                            context.push(
-                              '/leave/detail',
-                              extra: LeaveDetailArgs(
-                                title: leave.name.isNotEmpty ? leave.name : AppStrings.none,
-                                status: status,
-                                submissionDate: statusDateStr,
-                                leaveType: leave.leaveType.isNotEmpty ? leave.leaveType : AppStrings.none,
-                                startDate: startDateStr,
-                                reason: leave.description.isNotEmpty ? leave.description : AppStrings.noReason,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  );
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: LeaveCard(
+                              title: leave.name.isNotEmpty ? leave.name : AppStrings.none,
+                              status: status,
+                              statusDate: statusDateStr,
+                              leaveType: leave.leaveType.isNotEmpty ? leave.leaveType : AppStrings.none,
+                              dateRange: dateRangeStr,
+                              onTap: () {
+                                context.push(
+                                  '/leave/detail',
+                                  extra: LeaveDetailArgs(
+                                    title: leave.name.isNotEmpty ? leave.name : AppStrings.none,
+                                    status: status,
+                                    submissionDate: statusDateStr,
+                                    leaveType: leave.leaveType.isNotEmpty ? leave.leaveType : AppStrings.none,
+                                    startDate: startDateStr,
+                                    reason: leave.description.isNotEmpty ? leave.description : AppStrings.noReason,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    );
                   },
                   loading: () => const Center(
                     child: CircularProgressIndicator(color: AppColors.primaryBlueStart),

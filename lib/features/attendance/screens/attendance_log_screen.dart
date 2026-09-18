@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/month_year_filter_bar.dart';
 import '../providers/attendance_log_provider.dart';
-
 class AttendanceLogScreen extends ConsumerWidget {
   const AttendanceLogScreen({super.key});
 
@@ -16,20 +17,12 @@ class AttendanceLogScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          AppStrings.attendanceLog,
-          style: AppTextStyles.headingSmall.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      appBar: CustomAppBar(
+        title: AppStrings.attendanceLog,
+        titleStyle: AppTextStyles.headingSmall.copyWith(
+          color: AppColors.textPrimary,
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+        iconColor: AppColors.textPrimary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -37,38 +30,16 @@ class AttendanceLogScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Material(
-                color: AppColors.bgWhite,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  side: const BorderSide(color: AppColors.borderLight),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(6),
-                  onTap: () => _showMonthPicker(context, ref),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.date_range, color: AppColors.iconNavy, size: 20),
-                        const SizedBox(width: 8),
-                        Consumer(builder: (context, ref, child) {
-                          final filterDate = ref.watch(attendanceFilterDateProvider);
-                          final monthName = AppStrings.monthNames[filterDate.month - 1];
-                          return Text(
-                            '$monthName ${filterDate.year}',
-                            style: AppTextStyles.title.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                          );
-                        }),
-                        const Spacer(),
-                        const Icon(Icons.expand_more, color: AppColors.textSecondary, size: 24),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              Consumer(builder: (context, ref, child) {
+                final filterDate = ref.watch(attendanceFilterDateProvider);
+                return MonthYearFilterBar(
+                  selectedDate: filterDate,
+                  onDateChanged: (newDate) {
+                    ref.read(attendanceFilterDateProvider.notifier).updateDate(newDate);
+                  },
+                  showFilterIcon: false,
+                );
+              }),
               const SizedBox(height: 20),
 
               logs.when(
@@ -323,166 +294,4 @@ class AttendanceLogScreen extends ConsumerWidget {
     );
   }
 
-  void _showMonthPicker(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return const MonthYearPickerBottomSheet();
-      },
-    );
-  }
-}
-
-class MonthYearPickerBottomSheet extends ConsumerStatefulWidget {
-  const MonthYearPickerBottomSheet({super.key});
-
-  @override
-  ConsumerState<MonthYearPickerBottomSheet> createState() => _MonthYearPickerBottomSheetState();
-}
-
-class _MonthYearPickerBottomSheetState extends ConsumerState<MonthYearPickerBottomSheet> {
-  bool isYearView = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final filterDate = ref.watch(attendanceFilterDateProvider);
-    
-    return Container(
-      height: 484,
-      decoration: const BoxDecoration(
-        color: AppColors.bgWhite,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              width: 32,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.dragHandle,
-                borderRadius: BorderRadius.circular(100),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () => setState(() => isYearView = false),
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: !isYearView ? AppColors.textPrimary.withValues(alpha: 0.08) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          AppStrings.monthNames[filterDate.month - 1].substring(0, 3), 
-                          style: AppTextStyles.bodyMediumSemiBold.copyWith(color: AppColors.textPrimary)
-                        ),
-                        if (!isYearView) ...[
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_drop_down, color: AppColors.textPrimary, size: 18),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () => setState(() => isYearView = true),
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isYearView ? AppColors.textPrimary.withValues(alpha: 0.08) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '${filterDate.year}', 
-                          style: AppTextStyles.bodyMediumSemiBold.copyWith(color: AppColors.textPrimary)
-                        ),
-                        if (isYearView) ...[
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_drop_down, color: AppColors.textPrimary, size: 18),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: AppColors.borderLight),
-          Expanded(
-            child: isYearView 
-              ? ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    final year = now.year - index;
-                    final isSelected = filterDate.year == year;
-                    return InkWell(
-                      onTap: () {
-                        int selectedMonth = filterDate.month;
-                        if (year == now.year && selectedMonth > now.month) {
-                          selectedMonth = now.month;
-                        }
-                        ref.read(attendanceFilterDateProvider.notifier).updateDate(DateTime(year, selectedMonth));
-                        setState(() => isYearView = false);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        child: Text(
-                          '$year',
-                          style: AppTextStyles.title.copyWith(
-                            color: isSelected ? AppColors.primaryBlueStart : AppColors.textPrimary,
-                            fontWeight: isSelected ? FontWeight.w700 : null,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : ListView.builder(
-                  itemCount: AppStrings.monthNames.length,
-                  itemBuilder: (context, index) {
-                    final monthIndex = index + 1;
-                    final isFuture = filterDate.year == now.year && monthIndex > now.month;
-                    final isSelected = filterDate.month == monthIndex;
-                    
-                    return InkWell(
-                      onTap: isFuture ? null : () {
-                        ref.read(attendanceFilterDateProvider.notifier).updateDate(DateTime(filterDate.year, monthIndex));
-                        context.pop();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        child: Text(
-                          AppStrings.monthNames[index],
-                          style: AppTextStyles.title.copyWith(
-                            color: isFuture 
-                              ? AppColors.textSecondary.withValues(alpha: 0.3)
-                              : (isSelected ? AppColors.primaryBlueStart : AppColors.textPrimary),
-                            fontWeight: isSelected ? FontWeight.w700 : null,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-          ),
-        ],
-      ),
-    );
-  }
 }

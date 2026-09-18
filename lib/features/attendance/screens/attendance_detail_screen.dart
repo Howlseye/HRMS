@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_app_bar.dart';
 import '../models/attendance_log_entry.dart';
 import '../providers/attendance_log_provider.dart';
 
@@ -22,20 +22,12 @@ class AttendanceDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          AppStrings.detailAttendanceTitle,
-          style: AppTextStyles.headingSmall.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      appBar: CustomAppBar(
+        title: AppStrings.detailAttendanceTitle,
+        titleStyle: AppTextStyles.headingSmall.copyWith(
+          color: AppColors.textPrimary,
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+        iconColor: AppColors.textPrimary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

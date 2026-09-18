@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../theme/app_text_styles.dart';
@@ -12,7 +13,12 @@ class CustomTextField extends StatefulWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final int maxLines;
+  final int? minLines;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? prefixText;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -24,7 +30,12 @@ class CustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.onTap,
     this.maxLines = 1,
+    this.minLines,
     this.suffixIcon,
+    this.prefixIcon,
+    this.prefixText,
+    this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -46,7 +57,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             children: [
               if (widget.isRequired)
                 TextSpan(
-                  text: ' *',
+                  text: '*',
                   style: AppTextStyles.bodyMediumMedium.copyWith(color: AppColors.textDanger),
                 ),
             ],
@@ -59,6 +70,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           readOnly: widget.readOnly,
           onTap: widget.onTap,
           maxLines: widget.isPassword ? 1 : widget.maxLines,
+          minLines: widget.isPassword ? 1 : widget.minLines,
+          keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
           style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
           validator: (value) {
             if (widget.isRequired && (value == null || value.trim().isEmpty)) {
@@ -84,6 +98,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.circular(4),
               borderSide: const BorderSide(color: AppColors.primaryBlueStart),
             ),
+            prefixText: widget.prefixText != null ? '${widget.prefixText} ' : null,
+            prefixStyle: AppTextStyles.bodyMediumMedium.copyWith(color: AppColors.textSecondary),
+            prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+            prefixIcon: widget.prefixIcon,
             suffixIcon: widget.isPassword
                 ? IconButton(
                     icon: Icon(

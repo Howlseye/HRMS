@@ -49,7 +49,7 @@ class AppPopup extends StatelessWidget {
                 const SizedBox(height: 24),
                 Text(
                   title,
-                  style: AppTextStyles.buttonText.copyWith(
+                  style: AppTextStyles.titleBold.copyWith(
                     color: AppColors.textPrimary,
                   ),
                   textAlign: TextAlign.center,

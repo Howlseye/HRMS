@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_app_bar.dart';
 import '../models/employee_model.dart';
 
 class EmployeeDetailScreen extends StatelessWidget {
@@ -19,20 +19,12 @@ class EmployeeDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          AppStrings.detailEmployeeTitle,
-          style: AppTextStyles.headingSmall.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      appBar: CustomAppBar(
+        title: AppStrings.detailEmployeeTitle,
+        titleStyle: AppTextStyles.headingSmall.copyWith(
+          color: AppColors.textPrimary,
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+        iconColor: AppColors.textPrimary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

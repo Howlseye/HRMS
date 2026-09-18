@@ -175,6 +175,7 @@ class AppStrings {
   static const String leaveReason = 'Alasan Cuti';
   static const String leaveRejectReason = 'Alasan Ditolak';
   static const String cancelLeave = 'Batalkan Pengajuan';
+  static const String notesPrefix = 'Notes: ';
   static const String statusCancelled = 'Cancelled';
   static const String leaveCancelled = 'Pengajuan Dibatalkan';
   // New Leave Screen
@@ -196,7 +197,79 @@ class AppStrings {
   // Success Leave Screen
   static const String submissionSuccess = 'Pengajuan Berhasil';
   static const String submissionSuccessDesc = 'Pengajuan cuti Anda berhasil dikirim dan sedang menunggu proses persetujuan.';
+  static const String reimburseSuccessDesc = 'Pengajuan reimburse Anda berhasil dikirim dan sedang menunggu proses persetujuan.';
   static const String viewSubmission = 'Lihat Pengajuan';
 
 
+  // Reimbursement
+  static const String reimbursementTitle = 'Benefit Reimbursement';
+  static const String noReimbursementRequest = 'Belum ada pengajuan';
+  static const String noReimbursementRequestSub = 'Anda dapat mengajukan melalui\ntombol di bawah ini';
+  static const String infoPengajuanTitle = 'Informasi Pengajuan';
+  static const String infoPengajuanDesc = 'Ajukan paling lambat tanggal 4 setiap bulan untuk mendapatkan pencairan pada tanggal 11. Pengajuan setelah tanggal 4 akan dicairkan pada tanggal 11 bulan berikutnya.';
+  static const String batal = 'Batal';
+  static const String lanjutkan = 'Lanjutkan';
+
+  // Detail Reimbursement
+  static const String detailReimbursementTitle = 'Detail Pengajuan Reimburse';
+  static const String idPengajuan = 'ID Pengajuan';
+  static const String tanggalPengajuan = 'Tanggal Pengajuan';
+  static const String jumlahDisetujui = 'Jumlah yang disetujui';
+  static const String totalDisetujui = 'Total disetujui';
+  static const String rincianBenefit = 'Rincian Benefit';
+  static const String tanggalTransaksi = 'Tanggal Transaksi';
+  static const String jumlahDiajukan = 'Jumlah yang diajukan';
+  static const String deskripsi = 'Deskripsi';
+  static const String lampiran = 'Lampiran';
+  static const String cancelReimburseTitle = 'Batalkan Pengajuan?';
+  static const String cancelReimburseDesc = 'Pengajuan reimburse yang dibatalkan tidak dapat diproses lebih lanjut. Pastikan Anda ingin membatalkan pengajuan ini.';
+  static const String confirmCancel = 'Batalkan';
+  static const String cancelReimburseSuccessTitle = 'Pengajuan Dibatalkan';
+  static const String cancelReimburseSuccessDesc = 'Pengajuan tidak akan diproses lebih lanjut dan dapat diajukan kembali jika diperlukan.';
+  static const String kembali = 'Kembali';
+  
+  static const String newReimburseTitle = 'Pengajuan Reimburse';
+  static const String addBenefitSubtitle = 'Tambahkan rincian benefit yang ingin diajukan';
+  static const String emptyBenefitDetail = 'Belum ada rincian benefit';
+  static const String addDetail = 'Tambahkan rincian';
+  static const String send = 'Kirim';
+  
+  static const String addBenefitDetailTitle = 'Tambahkan Rincian';
+  static const String benefitType = 'Benefit';
+  static const String selectBenefitType = 'Pilih benefit';
+  static const String transactionDate = 'Tanggal Transaksi';
+  static const String selectTransactionDate = 'Pilih tanggal transaksi';
+  static const String submittedAmount = 'Jumlah yang diajukan';
+  static const String descPlaceholder = 'Contoh: Perjalanan dinas ke klien';
+  static const String attachment = 'Lampiran';
+  static const String maxFileSize = 'Ukuran file maksimal 5 MB';
+  static const String dragFileHere = 'Tarik file ke sini atau ';
+  static const String chooseFromDevice = 'pilih dari perangkat';
+  static const String save = 'Simpan';
+  
+  // Bottom Sheet Filter & Attachment
+  static const String filterBy = 'Filter berdasarkan';
+  static const String allStatus = 'Semua status';
+  static const String statusWaitingEnum = 'Menunggu';
+  static const String statusApprovedEnum = 'Disetujui';
+  static const String statusRejectedEnum = 'Ditolak';
+  
+  static const String chooseAttachmentSource = 'Pilih Sumber Lampiran';
+  static const String takePhoto = 'Ambil Foto';
+  static const String useCameraDirectly = 'Gunakan kamera langsung';
+  static const String chooseFromGallery = 'Pilih dari Galeri / Dokumen';
+  static const String choosePhotoOrPdf = 'Pilih file foto atau PDF dari perangkat Anda';
+  static const String deleteDetail = 'Hapus';
+  static const String deleteDetailSuccess = 'Rincian berhasil dihapus';
+  static const String deleteDetailConfirmTitle = 'Hapus Rincian?';
+  static const String deleteDetailConfirmDesc = 'Rincian benefit ini akan dihapus dari pengajuan Anda. Tindakan ini tidak dapat dibatalkan.';
+  static const String confirmDelete = 'Hapus';
+
+  // Dummy Reimbursement Data (Untuk Testing UI)
+  static const String dummyTransportation = 'Transportation';
+  static const String dummyKacamata = 'Kacamata';
+  static const String dummyMedical = 'Medical';
+  static const String dummyLainnya = 'Lainnya';
+  static const String zeroText = '0';
+  static const String rpText = 'Rp';
 }

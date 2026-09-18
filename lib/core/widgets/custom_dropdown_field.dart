@@ -32,7 +32,7 @@ class CustomDropdownField extends StatelessWidget {
             children: [
               if (isRequired)
                 TextSpan(
-                  text: ' *',
+                  text: '*',
                   style: AppTextStyles.bodyMediumMedium.copyWith(color: AppColors.textDanger),
                 ),
             ],

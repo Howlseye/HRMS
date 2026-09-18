@@ -28,7 +28,9 @@ class QuickActionMenu extends StatelessWidget {
             icon: 'assets/icons/reimburse_icon.png',
             label: AppStrings.menuReimburse,
             backgroundColor: AppColors.menuBgGreen,
-            onTap: () {},
+            onTap: () {
+              context.push('/reimbursement');
+            },
           ),
           _buildMenuItem(
             icon: 'assets/icons/cuti_icon.png',

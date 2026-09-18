@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_popup.dart';
+import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../widgets/leave_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -102,19 +103,10 @@ class LeaveDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.bgLight,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.iconNavy),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          AppStrings.detailLeaveTitle,
-          style: AppTextStyles.headingSmall.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      appBar: CustomAppBar(
+        title: AppStrings.detailLeaveTitle,
+        titleStyle: AppTextStyles.headingSmall.copyWith(
+          color: AppColors.textPrimary,
         ),
       ),
       body: SafeArea(

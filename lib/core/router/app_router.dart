@@ -15,6 +15,15 @@ import '../../features/leave/screens/leave_screen.dart';
 import '../../features/leave/screens/leave_detail_screen.dart';
 import '../../features/leave/screens/new_leave_screen.dart';
 import '../../features/leave/screens/success_leave_screen.dart';
+import '../../features/reimbursement/screens/reimbursement_screen.dart';
+import '../../features/reimbursement/screens/reimbursement_detail_screen.dart';
+import '../../features/reimbursement/screens/new_reimbursement_screen.dart';
+import '../../features/reimbursement/screens/reimbursement_success_screen.dart';
+import '../../features/reimbursement/models/reimbursement_model.dart';
+import '../../core/widgets/success_screen.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
 
 class AppRouter {
   AppRouter._();
@@ -98,6 +107,71 @@ class AppRouter {
             context: context,
             state: state,
             child: const SuccessLeaveScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reimbursement',
+        pageBuilder: (context, state) => _buildPageWithDefaultTransition(
+          context: context,
+          state: state,
+          child: const ReimbursementScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/reimbursement/detail',
+        pageBuilder: (context, state) {
+          final reimbursement = state.extra as ReimbursementModel;
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: ReimbursementDetailScreen(reimbursement: reimbursement),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reimbursement/new',
+        pageBuilder: (context, state) {
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const NewReimbursementScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reimbursement/success',
+        pageBuilder: (context, state) {
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const ReimbursementSuccessScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reimbursement/cancel-success',
+        pageBuilder: (context, state) {
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: SuccessScreen(
+              title: AppStrings.cancelReimburseSuccessTitle,
+              subtitleWidget: Text(
+                AppStrings.cancelReimburseSuccessDesc,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textTertiary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              buttonText: AppStrings.kembali,
+              onButtonPressed: () {
+                context.go('/reimbursement');
+              },
+              onClosePressed: () {
+                context.go('/reimbursement');
+              },
+            ),
           );
         },
       ),

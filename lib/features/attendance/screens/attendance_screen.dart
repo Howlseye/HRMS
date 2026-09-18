@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/attendance_activity_card.dart';
 import '../../../core/widgets/attendance_card.dart';
 import '../../../core/widgets/custom_refresh_indicator.dart';
@@ -18,20 +19,13 @@ class AttendanceScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.primaryBlueStart,
-      appBar: AppBar(
+      appBar: CustomAppBar(
         backgroundColor: AppColors.primaryBlueStart,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textWhite),
-          onPressed: () => context.pop(),
+        title: AppStrings.titleAttendance,
+        titleStyle: AppTextStyles.title.copyWith(
+          color: AppColors.textWhite,
         ),
-        title: Text(
-          AppStrings.titleAttendance,
-          style: AppTextStyles.title.copyWith(
-            color: AppColors.textWhite,
-          ),
-        ),
-        centerTitle: true,
+        iconColor: AppColors.textWhite,
       ),
       body: Column(
         children: [
