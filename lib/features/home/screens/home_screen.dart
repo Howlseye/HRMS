@@ -133,11 +133,40 @@ class HomeScreen extends ConsumerWidget {
                     title: AppStrings.announcement,
                     onTap: () {},
                   ),
-                  ...announcements.map((announcement) => AnnouncementCard(
-                        title: announcement.title,
-                        description: announcement.description,
-                        date: announcement.date,
-                      )),
+                  if (announcements.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 24.0),
+                        decoration: BoxDecoration(
+                          color: AppColors.bgWhite,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/empty_data.svg',
+                              height: 64,
+                              width: 78,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              AppStrings.noAnnouncement,
+                              style: AppTextStyles.bodySmall.copyWith(color: AppColors.iconDisabled),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    ...announcements.map((announcement) => AnnouncementCard(
+                          title: announcement.title,
+                          description: announcement.description,
+                          date: announcement.date,
+                        )),
                   const SizedBox(height: 32),
                 ],
               ),

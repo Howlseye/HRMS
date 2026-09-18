@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -115,21 +116,58 @@ class EmployeeScreen extends ConsumerWidget {
                   ref.invalidate(employeeProvider);
                   await Future.delayed(const Duration(seconds: 1));
                 },
-                child: ListView.separated(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(24.0),
-                  itemCount: employees.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final employee = employees[index];
-                    return EmployeeCard(
-                      employee: employee,
-                      onTap: () {
-                        context.push('/employee-detail', extra: employee);
-                      },
-                    );
-                  },
-                ),
+                child: employees.isEmpty
+                    ? LayoutBuilder(
+                        builder: (context, constraints) => ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            Container(
+                              height: constraints.maxHeight,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/empty_data.svg',
+                                    width: 120,
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    AppStrings.noEmployeeData,
+                                    style: AppTextStyles.titleBold.copyWith(
+                                      color: AppColors.textPrimary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    AppStrings.noEmployeeDataDesc,
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(24.0),
+                        itemCount: employees.length,
+                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final employee = employees[index];
+                          return EmployeeCard(
+                            employee: employee,
+                            onTap: () {
+                              context.push('/employee-detail', extra: employee);
+                            },
+                          );
+                        },
+                      ),
               ),
             ),
           ],

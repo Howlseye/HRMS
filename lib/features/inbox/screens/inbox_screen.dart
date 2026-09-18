@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../providers/inbox_provider.dart';
 import '../widgets/notification_card.dart';
 import '../../../core/widgets/app_popup.dart';
@@ -30,14 +31,12 @@ class InboxScreen extends ConsumerWidget {
                       text: '${AppStrings.menuInbox} ',
                       style: AppTextStyles.headingExtraBold.copyWith(
                         color: AppColors.textPrimary,
-                        fontSize: 20,
                       ),
                       children: [
                         TextSpan(
                           text: '($unreadCount)',
                           style: AppTextStyles.headingExtraBold.copyWith(
                             color: AppColors.primaryBlueStart,
-                            fontSize: 20,
                           ),
                         ),
                       ],
@@ -75,12 +74,40 @@ class InboxScreen extends ConsumerWidget {
             ),
             const Divider(height: 1, thickness: 1, color: AppColors.borderLight),
             Expanded(
-              child: ListView.builder(
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  return NotificationCard(notification: notifications[index]);
-                },
-              ),
+              child: notifications.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/empty_data.svg',
+                            width: 120,
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            AppStrings.noInboxData,
+                            style: AppTextStyles.titleBold.copyWith(
+                              color: AppColors.textPrimary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            AppStrings.noInboxDataDesc,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: notifications.length,
+                      itemBuilder: (context, index) {
+                        return NotificationCard(notification: notifications[index]);
+                      },
+                    ),
             ),
           ],
         ),

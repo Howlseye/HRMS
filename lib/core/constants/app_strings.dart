@@ -78,6 +78,8 @@ class AppStrings {
   static const String emptyActivity = 'Tidak ada aktivitas hari ini';
   static const String viewAll = 'Lihat Semua';
   static const String announcement = 'Pengumuman';
+  static const String noAnnouncement = 'Belum ada pengumuman';
+  static const String noAnnouncementSub = 'Tidak ada pengumuman yang tersedia untuk saat ini.';
   // Attendance Success Screen
   static const String checkInSent = 'Check In Dikirim';
   static const String checkOutSent = 'Check Out Dikirim';
@@ -102,6 +104,8 @@ class AppStrings {
 
   // Inbox Screen
   static const String menuInbox = 'Inbox';
+  static const String noInboxData = 'Belum ada notifikasi';
+  static const String noInboxDataDesc = 'Anda belum memiliki notifikasi\napapun saat ini.';
   static const String markAllRead = 'Tandai Sudah Dibaca';
   static const String statusApproved = 'Approved';
   static const String statusRejected = 'Rejected';
@@ -110,6 +114,8 @@ class AppStrings {
   // Employee Screen
   static const String menuEmployee = 'Employee';
   static const String detailEmployeeTitle = 'Detail Employee';
+  static const String noEmployeeData = 'Belum ada data employee';
+  static const String noEmployeeDataDesc = 'Data employee masih kosong.';
   static const String joinDate = 'Tanggal Bergabung';
   static const String phoneNumber = 'No. Handphone';
   static const String email = 'Email';
