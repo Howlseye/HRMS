@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_popup.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/utils/currency_formatter.dart';
+import '../../../core/utils/shared_prefs_provider.dart';
+import '../../auth/providers/auth_session_provider.dart';
 import '../models/reimbursement_model.dart';
+import '../repositories/reimbursement_repository.dart';
+import '../providers/reimbursement_provider.dart';
 
-class ReimbursementDetailScreen extends StatelessWidget {
+class ReimbursementDetailScreen extends ConsumerWidget {
   final ReimbursementModel reimbursement;
 
   const ReimbursementDetailScreen({
@@ -63,11 +72,11 @@ class ReimbursementDetailScreen extends StatelessWidget {
   String _getAmountLabel(ReimbursementItemModel item) {
     switch (reimbursement.status) {
       case ReimbursementStatus.approved:
-        return item.approvedAmount ?? item.amount;
+        return AppCurrencyFormatter.format(item.approvedAmount ?? item.amount);
       case ReimbursementStatus.rejected:
-        return 'Rp0';
+        return '${AppStrings.rpText}0';
       case ReimbursementStatus.waiting:
-        return '-';
+        return AppStrings.none;
     }
   }
 
@@ -76,14 +85,14 @@ class ReimbursementDetailScreen extends StatelessWidget {
       case ReimbursementStatus.approved:
         return _calculateTotal();
       case ReimbursementStatus.rejected:
-        return 'Rp0';
+        return '${AppStrings.rpText}0';
       case ReimbursementStatus.waiting:
-        return '-';
+        return AppStrings.none;
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       appBar: const CustomAppBar(
@@ -99,15 +108,19 @@ class ReimbursementDetailScreen extends StatelessWidget {
               const SizedBox(height: 12),
               _buildSummaryCard(),
               const SizedBox(height: 12),
-              _buildDetailsCard(),
-              if (reimbursement.status == ReimbursementStatus.waiting) ...[
-                const SizedBox(height: 24),
-                _buildCancelButton(context),
-              ],
+              _buildDetailsCard(context, ref),
             ],
           ),
         ),
       ),
+      bottomNavigationBar: reimbursement.status == ReimbursementStatus.waiting
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildCancelButton(context, ref),
+              ),
+            )
+          : null,
     );
   }
 
@@ -261,7 +274,7 @@ class ReimbursementDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsCard() {
+  Widget _buildDetailsCard(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -324,11 +337,11 @@ class ReimbursementDetailScreen extends StatelessWidget {
                       children: [
                         _buildDetailItemRow(AppStrings.tanggalTransaksi, item.transactionDate),
                         const SizedBox(height: 12),
-                        _buildDetailItemRow(AppStrings.jumlahDiajukan, item.amount, isAmount: true),
+                        _buildDetailItemRow(AppStrings.jumlahDiajukan, AppCurrencyFormatter.format(item.amount), isAmount: true),
                         const SizedBox(height: 12),
-                        _buildDetailItemRow(AppStrings.deskripsi, item.description),
+                        _buildDetailItemRow(AppStrings.deskripsi, item.description.isEmpty ? AppStrings.none : item.description),
                         const SizedBox(height: 12),
-                        _buildAttachmentRow(item.attachmentName),
+                        _buildAttachmentRow(context, ref, item),
                       ],
                     ),
                   ),
@@ -383,7 +396,7 @@ class ReimbursementDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAttachmentRow(String fileName) {
+  Widget _buildAttachmentRow(BuildContext context, WidgetRef ref, ReimbursementItemModel item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -394,28 +407,194 @@ class ReimbursementDetailScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Row(
-          children: [
-            Text(
-              fileName,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textPrimary,
-                decoration: TextDecoration.underline,
+        GestureDetector(
+          onTap: () {
+            if (item.attachmentName.isNotEmpty && item.attachmentPath != null) {
+              _showAttachmentPopup(context, ref, item);
+            }
+          },
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  item.attachmentName.isEmpty ? AppStrings.none : item.attachmentName.split('/').last,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textPrimary,
+                    decoration: item.attachmentName.isEmpty ? TextDecoration.none : TextDecoration.underline,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-            const SizedBox(width: 4),
-            const Icon(
-              Icons.open_in_new,
-              size: 12,
-              color: AppColors.textPrimary,
-            ),
-          ],
+              if (item.attachmentName.isNotEmpty) ...[
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.open_in_new,
+                  size: 12,
+                  color: AppColors.textPrimary,
+                ),
+              ],
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildCancelButton(BuildContext context) {
+  void _showAttachmentPopup(BuildContext context, WidgetRef ref, ReimbursementItemModel item) {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final session = ref.read(authSessionProvider);
+    final sid = session['sid'] ?? prefs.getString('sid');
+    final cookie = (sid != null && sid.isNotEmpty) ? 'sid=$sid' : null;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final baseUrl = dotenv.env['BASE_URL'] ?? '';
+        final imageUrl = '$baseUrl${item.attachmentPath}';
+        
+        final isPdf = item.attachmentName.toLowerCase().endsWith('.pdf') || (item.attachmentPath?.toLowerCase().endsWith('.pdf') ?? false);
+        
+        return Dialog(
+          backgroundColor: AppColors.bgWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.attachmentName.split('/').last,
+                        style: AppTextStyles.bodyMediumBold.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(ctx).pop(),
+                      child: const Icon(
+                        Icons.close,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(color: AppColors.borderLight, height: 1, thickness: 1),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: GestureDetector(
+                  onTap: isPdf ? null : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Scaffold(
+                          backgroundColor: AppColors.textDark,
+                          appBar: AppBar(
+                            backgroundColor: AppColors.textDark,
+                            iconTheme: const IconThemeData(color: AppColors.textWhite),
+                          ),
+                          body: Center(
+                            child: InteractiveViewer(
+                              child: CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                httpHeaders: cookie != null ? {'Cookie': cookie} : null,
+                                placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => const Icon(Icons.error, color: AppColors.textDanger),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 250,
+                      child: isPdf 
+                          ? const Icon(
+                              Icons.picture_as_pdf,
+                              size: 100,
+                              color: AppColors.textDanger,
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: imageUrl,
+                              httpHeaders: cookie != null ? {'Cookie': cookie} : null,
+                              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) => const Icon(Icons.error, color: AppColors.textDanger),
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      Navigator.of(ctx).pop();
+                      try {
+                        final savePath = await ref.read(reimbursementRepositoryProvider).downloadAttachment(
+                          imageUrl,
+                          item.attachmentName.split('/').last,
+                        );
+                        
+                        if (context.mounted) {
+                          AppSnackbar.show(
+                            context,
+                            message: '${AppStrings.downloadSuccess}: $savePath',
+                            type: SnackbarType.success,
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          AppSnackbar.show(
+                            context,
+                            message: '${AppStrings.downloadFailed}: $e',
+                            type: SnackbarType.error,
+                          );
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.download, color: AppColors.textWhite),
+                    label: Text(
+                      AppStrings.downloadText,
+                      style: AppTextStyles.buttonText.copyWith(
+                        color: AppColors.textWhite,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlueStart,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCancelButton(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
@@ -429,9 +608,24 @@ class ReimbursementDetailScreen extends StatelessWidget {
               primaryButtonText: AppStrings.confirmCancel,
               secondaryButtonText: AppStrings.cancel,
               primaryButtonColor: AppColors.textDanger,
-              onPrimaryPressed: () {
+              onPrimaryPressed: () async {
                 Navigator.of(ctx).pop();
-                context.go('/reimbursement/cancel-success');
+
+                try {
+                  await ref.read(reimbursementRepositoryProvider).cancelReimbursement(reimbursement.id);
+                  if (context.mounted) {
+                    ref.invalidate(reimbursementProvider);
+                    context.go('/reimbursement/cancel-success');
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    AppSnackbar.show(
+                      context,
+                      message: e.toString(),
+                      type: SnackbarType.error,
+                    );
+                  }
+                }
               },
               onSecondaryPressed: () {
                 Navigator.of(ctx).pop();
@@ -458,23 +652,15 @@ class ReimbursementDetailScreen extends StatelessWidget {
   }
 
   String _calculateTotal() {
-    int total = 0;
+    double total = 0;
     for (var item in reimbursement.items) {
       final amountToUse = item.approvedAmount ?? item.amount;
-      final numStr = amountToUse.replaceAll(RegExp(r'[^0-9]'), '');
-      if (numStr.isNotEmpty) {
-        total += int.parse(numStr);
+      final cleanStr = amountToUse.replaceAll(RegExp(r'[^0-9.]'), '');
+      if (cleanStr.isNotEmpty) {
+        total += double.tryParse(cleanStr) ?? 0;
       }
     }
-    if (total == 0) return '-';
-    final str = total.toString();
-    String formatted = '';
-    for (int i = 0; i < str.length; i++) {
-      if (i > 0 && i % 3 == 0) {
-        formatted = '.$formatted';
-      }
-      formatted = str[str.length - 1 - i] + formatted;
-    }
-    return 'Rp$formatted';
+    if (total == 0) return AppStrings.none;
+    return AppCurrencyFormatter.format(total);
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
-
+import '../../../core/utils/currency_formatter.dart';
 import '../models/reimbursement_model.dart';
 
 class ReimbursementCard extends StatelessWidget {
@@ -126,7 +126,7 @@ class ReimbursementCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              item.amount,
+                              AppCurrencyFormatter.format(item.amount),
                               style: AppTextStyles.bodySmallBold.copyWith(
                                 color: AppColors.filterChipBorderActive,
                               ),

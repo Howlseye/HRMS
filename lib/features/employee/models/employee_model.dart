@@ -8,6 +8,8 @@ class EmployeeModel {
   final String joinDate;
   final String email;
   final String placement;
+  final String? expenseApprover;
+  final String? company;
 
   EmployeeModel({
     required this.id,
@@ -19,6 +21,8 @@ class EmployeeModel {
     required this.joinDate,
     required this.email,
     required this.placement,
+    this.expenseApprover,
+    this.company,
   });
 
   EmployeeModel copyWith({
@@ -31,6 +35,8 @@ class EmployeeModel {
     String? joinDate,
     String? email,
     String? placement,
+    String? expenseApprover,
+    String? company,
   }) {
     return EmployeeModel(
       id: id ?? this.id,
@@ -42,6 +48,8 @@ class EmployeeModel {
       joinDate: joinDate ?? this.joinDate,
       email: email ?? this.email,
       placement: placement ?? this.placement,
+      expenseApprover: expenseApprover ?? this.expenseApprover,
+      company: company ?? this.company,
     );
   }
 
@@ -56,6 +64,8 @@ class EmployeeModel {
       joinDate: json['date_of_joining'] ?? '',
       email: json['personal_email'] ?? '',
       placement: json['department'] ?? '',
+      expenseApprover: json['expense_approver'],
+      company: json['company'],
     );
   }
 }

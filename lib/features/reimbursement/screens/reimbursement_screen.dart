@@ -9,6 +9,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/info_dialog.dart';
 import '../../../core/widgets/month_year_filter_bar.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../providers/reimbursement_provider.dart';
 import '../widgets/reimbursement_card.dart';
 import '../../../core/widgets/status_filter_bottom_sheet.dart';
@@ -47,8 +48,9 @@ class _ReimbursementScreenState extends ConsumerState<ReimbursementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: AppStrings.reimbursementTitle,
+        onBackPressed: () => context.go('/main'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -92,60 +94,70 @@ class _ReimbursementScreenState extends ConsumerState<ReimbursementScreen> {
                       }).toList();
 
                       if (filteredReimbursements.isEmpty) {
-                        return LayoutBuilder(
-                          builder: (context, constraints) => ListView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            children: [
-                              Container(
-                                height: constraints.maxHeight,
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/empty_data.svg',
-                                      width: 100,
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Text(
-                                      AppStrings.noReimbursementRequest,
-                                      style: AppTextStyles.titleBold.copyWith(
-                                        color: AppColors.textPrimary,
+                        return CustomRefreshIndicator(
+                          onRefresh: () async {
+                            final _ = await ref.refresh(reimbursementProvider.future);
+                          },
+                          child: LayoutBuilder(
+                            builder: (context, constraints) => ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                Container(
+                                  height: constraints.maxHeight,
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/empty_data.svg',
+                                        width: 100,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      AppStrings.noReimbursementRequestSub,
-                                      style: AppTextStyles.bodyMedium.copyWith(
-                                        color: AppColors.textSecondary,
+                                      const SizedBox(height: 24),
+                                      Text(
+                                        AppStrings.noReimbursementRequest,
+                                        style: AppTextStyles.titleBold.copyWith(
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        AppStrings.noReimbursementRequestSub,
+                                        style: AppTextStyles.bodyMedium.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       }
 
-                      return ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: filteredReimbursements.length,
-                        itemBuilder: (context, index) {
-                          final data = filteredReimbursements[index];
-                        return ReimbursementCard(
-                          title: data.title,
-                          status: data.status,
-                          date: data.date,
-                          items: data.items,
-                          onTap: () {
-                            context.push('/reimbursement/detail', extra: data);
+                      return CustomRefreshIndicator(
+                        onRefresh: () async {
+                          final _ = await ref.refresh(reimbursementProvider.future);
+                        },
+                        child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: filteredReimbursements.length,
+                          itemBuilder: (context, index) {
+                            final data = filteredReimbursements[index];
+                            return ReimbursementCard(
+                              title: data.title,
+                              status: data.status,
+                              date: data.date,
+                              items: data.items,
+                              onTap: () {
+                                context.push('/reimbursement/detail', extra: data);
+                              },
+                            );
                           },
-                        );
-                      },
-                    );
+                        ),
+                      );
                   },
                   loading: () => const Center(
                       child: CircularProgressIndicator(),

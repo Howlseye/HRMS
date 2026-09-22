@@ -140,6 +140,7 @@ class AppStrings {
   // Error Messages
   static const String errorServerSide = 'Server Side Error';
   static const String errorDataNotFound = 'Data Not Found';
+  static const String employeeDataNotLoaded = 'Data karyawan belum dimuat. Silakan muat ulang halaman.';
   static String requiredField(String field) => '$field wajib diisi';
 
   // Filters
@@ -241,6 +242,11 @@ class AppStrings {
   static const String send = 'Kirim';
   
   static const String addBenefitDetailTitle = 'Tambahkan Rincian';
+  static const String editDetail = 'Edit Rincian';
+  static const String errorLoadBenefitType = 'Gagal memuat tipe benefit.\n';
+  static const String downloadText = 'Unduh';
+  static const String downloadSuccess = 'Berhasil mengunduh lampiran';
+  static const String downloadFailed = 'Gagal mengunduh lampiran';
   static const String benefitType = 'Benefit';
   static const String selectBenefitType = 'Pilih benefit';
   static const String transactionDate = 'Tanggal Transaksi';

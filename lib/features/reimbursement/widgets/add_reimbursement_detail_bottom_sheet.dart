@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
@@ -15,8 +16,9 @@ import '../../../core/widgets/app_popup.dart';
 import '../../../core/utils/currency_input_formatter.dart';
 import 'package:intl/intl.dart';
 import '../models/reimbursement_model.dart';
+import '../providers/reimbursement_provider.dart';
 
-class AddReimbursementDetailBottomSheet extends StatefulWidget {
+class AddReimbursementDetailBottomSheet extends ConsumerStatefulWidget {
   final ReimbursementItemModel? initialItem;
   final VoidCallback? onDelete;
 
@@ -27,24 +29,16 @@ class AddReimbursementDetailBottomSheet extends StatefulWidget {
   });
 
   @override
-  State<AddReimbursementDetailBottomSheet> createState() => _AddReimbursementDetailBottomSheetState();
+  ConsumerState<AddReimbursementDetailBottomSheet> createState() => _AddReimbursementDetailBottomSheetState();
 }
 
-class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDetailBottomSheet> {
+class _AddReimbursementDetailBottomSheetState extends ConsumerState<AddReimbursementDetailBottomSheet> {
   String? _selectedBenefit;
   DateTime? _transactionDate;
   File? _attachment;
   bool _isFormValid = false;
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  String? _existingAttachmentName;
-
-  final List<String> _benefits = [
-    AppStrings.dummyKacamata,
-    AppStrings.dummyTransportation,
-    AppStrings.dummyMedical,
-    AppStrings.dummyLainnya,
-  ];
+  final TextEditingController _descriptionController = TextEditingController();  String? _existingAttachmentName;
 
   @override
   void initState() {
@@ -157,7 +151,7 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    _pickAttachment(null); // null means file picker
+                    _pickAttachment(null);
                   },
                 ),
               ],
@@ -180,7 +174,7 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
     } else {
       PlatformFile? result = await FilePicker.pickFile(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        allowedExtensions: ['jpg', 'jpeg', 'pdf'],
       );
 
       if (result != null && result.path != null) {
@@ -226,13 +220,30 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
         children: [
           _buildHeader(),
           Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildFormFields(),
-                ],
+            child: ref.watch(benefitTypeProvider).when(
+              data: (benefits) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildFormFields(benefits),
+                    ],
+                  ),
+                );
+              },
+              loading: () => const Padding(
+                padding: EdgeInsets.all(48.0),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (err, stack) => Padding(
+                padding: const EdgeInsets.all(48.0),
+                child: Center(
+                  child: Text(
+                    '${AppStrings.errorLoadBenefitType}$err',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ),
           ),
@@ -256,7 +267,7 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
         ),
         const SizedBox(height: 12),
         Text(
-          widget.initialItem != null ? 'Edit Rincian' : AppStrings.addBenefitDetailTitle,
+          widget.initialItem != null ? AppStrings.editDetail : AppStrings.addBenefitDetailTitle,
           style: AppTextStyles.titleBold.copyWith(
             color: AppColors.textPrimary,
           ),
@@ -266,14 +277,14 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
     );
   }
 
-  Widget _buildFormFields() {
+  Widget _buildFormFields(List<String> benefits) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         CustomDropdownField(
           label: AppStrings.benefitType,
           value: _selectedBenefit,
-          items: _benefits,
+          items: benefits,
           hintText: AppStrings.selectBenefitType,
           isRequired: true,
           onChanged: (value) {
@@ -289,8 +300,8 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
           hintText: AppStrings.selectTransactionDate,
           isRequired: true,
           value: _transactionDate,
-          firstDate: DateTime(2000), // No specific validation for reimburse
-          lastDate: DateTime.now(), // Max date today for transaction
+          firstDate: DateTime(2000),
+          lastDate: DateTime.now(),
           onChanged: (date) {
             setState(() {
               _transactionDate = date;
@@ -481,12 +492,12 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
                         primaryButtonText: AppStrings.confirmDelete,
                         primaryButtonColor: AppColors.textDanger,
                         onPrimaryPressed: () {
-                          Navigator.pop(context); // Close dialog
+                          Navigator.pop(context);
                           if (widget.onDelete != null) widget.onDelete!();
-                          Navigator.pop(context); // Close bottom sheet
+                          Navigator.pop(context);
                         },
                         onSecondaryPressed: () {
-                          Navigator.pop(context); // Close dialog
+                          Navigator.pop(context);
                         },
                       ),
                     );
@@ -516,6 +527,7 @@ class _AddReimbursementDetailBottomSheetState extends State<AddReimbursementDeta
                     attachmentName: _attachment != null 
                         ? '${_attachment!.path.split(Platform.pathSeparator).last} - ${(_attachment!.lengthSync() / (1024 * 1024)).toStringAsFixed(1)} mb'
                         : _existingAttachmentName ?? '',
+                    attachmentPath: _attachment?.path,
                   );
                   Navigator.pop(context, item);
                 } : null,

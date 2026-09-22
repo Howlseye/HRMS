@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/currency_formatter.dart';
 import '../models/reimbursement_model.dart';
 
 class ReimbursementConfirmationBottomSheet extends StatelessWidget {
@@ -14,23 +15,12 @@ class ReimbursementConfirmationBottomSheet extends StatelessWidget {
   });
 
   String _calculateTotal() {
-    int total = 0;
+    double total = 0;
     for (var item in items) {
-      final numStr = item.amount.replaceAll(RegExp(r'[^0-9]'), '');
-      if (numStr.isNotEmpty) {
-        total += int.parse(numStr);
-      }
+      total += AppCurrencyFormatter.parseToDouble(item.amount);
     }
     if (total == 0) return 'Rp0';
-    final str = total.toString();
-    String formatted = '';
-    for (int i = 0; i < str.length; i++) {
-      if (i > 0 && i % 3 == 0) {
-        formatted = '.$formatted';
-      }
-      formatted = str[str.length - 1 - i] + formatted;
-    }
-    return 'Rp$formatted';
+    return AppCurrencyFormatter.format(total);
   }
 
   @override
@@ -74,7 +64,7 @@ class ReimbursementConfirmationBottomSheet extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          item.amount,
+                          AppCurrencyFormatter.format(item.amount),
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: AppColors.textPrimary,
                           ),

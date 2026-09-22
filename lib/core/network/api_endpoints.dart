@@ -5,6 +5,9 @@ class ApiEndpoints {
   static const String login = 'method/login';
   static const String logout = 'method/logout';
 
+  // Common
+  static const String uploadFile = 'method/upload_file';
+
   // Employee
   static const String getEmployees = 'resource/Employee';
   static const String getEmployeeDetail = 'resource/Employee/{id}';
@@ -27,4 +30,10 @@ class ApiEndpoints {
   static const String getLeaveTypes = 'resource/Leave Type?fields=["*"]';
   static const String createLeave = 'resource/Leave Application';
   static const String cancelLeave = 'method/frappe.client.cancel';
+
+  //Reimburse
+  static const String getBenefitType = 'resource/Expense Claim Type';
+  static const String getReimbursements = 'resource/Expense Claim';
+  static const String getReimbursementsDetail = 'resource/Expense Claim/{id}';
+
 }

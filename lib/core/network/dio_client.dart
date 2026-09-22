@@ -10,7 +10,7 @@ final dioProvider = Provider<Dio>((ref) {
   
   final dio = Dio(
     BaseOptions(
-      baseUrl: dotenv.env['BASE_URL'] ?? '',
+      baseUrl: '${dotenv.env['BASE_URL'] ?? ''}/api/',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {

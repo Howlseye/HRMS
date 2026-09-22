@@ -7,6 +7,7 @@ class ReimbursementItemModel {
   final String transactionDate;
   final String description;
   final String attachmentName;
+  final String? attachmentPath;
   final String? notes;
 
   const ReimbursementItemModel({
@@ -16,19 +17,25 @@ class ReimbursementItemModel {
     required this.transactionDate,
     required this.description,
     required this.attachmentName,
+    this.attachmentPath,
     this.notes,
   });
 
   factory ReimbursementItemModel.fromJson(Map<String, dynamic> json) {
     return ReimbursementItemModel(
-      name: json['name'] ?? '',
-      amount: json['amount'] ?? '',
-      approvedAmount: json['approvedAmount'],
-      transactionDate: json['transaction_date'] ?? '',
-      description: json['description'] ?? '',
-      attachmentName: json['attachment_name'] ?? '',
-      notes: json['notes'],
+      name: json['expense_type']?.toString() ?? json['name']?.toString() ?? '',
+      amount: json['amount']?.toString() ?? '0',
+      approvedAmount: json['sanctioned_amount']?.toString(),
+      transactionDate: json['expense_date']?.toString() ?? json['transaction_date']?.toString() ?? '',
+      description: _stripHtml(json['description']?.toString() ?? ''),
+      attachmentName: json['custom_transfer_proof']?.toString() ?? json['attachment_name']?.toString() ?? '',
+      attachmentPath: json['custom_transfer_proof']?.toString() ?? json['attachment_name']?.toString(),
+      notes: json['notes']?.toString(),
     );
+  }
+
+  static String _stripHtml(String text) {
+    return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '').trim();
   }
 }
 
@@ -50,12 +57,17 @@ class ReimbursementModel {
   });
 
   factory ReimbursementModel.fromJson(Map<String, dynamic> json) {
+    final expenses = json['expenses'] as List?;
+    final itemsList = expenses != null 
+        ? expenses.map((e) => ReimbursementItemModel.fromJson(e as Map<String, dynamic>)).toList()
+        : <ReimbursementItemModel>[];
+
     return ReimbursementModel(
       id: json['name'] ?? '',
       title: json['name'] ?? '',
-      status: _parseStatus(json['status']),
+      status: _parseStatus(json['approval_status'] ?? json['status']),
       date: json['posting_date'] ?? '',
-      items: [], // This will be parsed from a child table when implemented
+      items: itemsList,
     );
   }
 

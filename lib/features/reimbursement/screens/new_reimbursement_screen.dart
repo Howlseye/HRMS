@@ -8,19 +8,23 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/app_popup.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../employee/providers/current_employee_provider.dart';
+import '../providers/reimbursement_provider.dart';
+import '../repositories/reimbursement_repository.dart';
 import '../widgets/add_reimbursement_detail_bottom_sheet.dart';
 import '../widgets/reimbursement_confirmation_bottom_sheet.dart';
 
 import '../models/reimbursement_model.dart';
 
-class NewReimbursementScreen extends StatefulWidget {
+class NewReimbursementScreen extends ConsumerStatefulWidget {
   const NewReimbursementScreen({super.key});
 
   @override
-  State<NewReimbursementScreen> createState() => _NewReimbursementScreenState();
+  ConsumerState<NewReimbursementScreen> createState() => _NewReimbursementScreenState();
 }
 
-class _NewReimbursementScreenState extends State<NewReimbursementScreen> {
+class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen> {
   final List<ReimbursementItemModel> _addedItems = [];
 
   Future<void> _openBottomSheet({ReimbursementItemModel? initialItem, int? index}) async {
@@ -79,11 +83,42 @@ class _NewReimbursementScreenState extends State<NewReimbursementScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => ReimbursementConfirmationBottomSheet(
+      builder: (ctx) => ReimbursementConfirmationBottomSheet(
         items: _addedItems,
-        onConfirm: () {
-          // TODO: Implement API submit later
-          context.go('/reimbursement/success');
+        onConfirm: () async {
+          final employee = ref.read(currentEmployeeProvider).value;
+          if (employee == null) {
+            AppSnackbar.show(
+              context,
+              message: AppStrings.employeeDataNotLoaded,
+              type: SnackbarType.error,
+            );
+            return;
+          }
+
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (c) => const Center(child: CircularProgressIndicator()),
+          );
+
+          try {
+            await ref.read(reimbursementRepositoryProvider).submitReimbursement(_addedItems, employee);
+            if (mounted) {
+              Navigator.of(context).pop();
+              ref.invalidate(reimbursementProvider);
+              context.go('/reimbursement/success');
+            }
+          } catch (e) {
+            if (mounted) {
+              Navigator.of(context).pop();
+              AppSnackbar.show(
+                context,
+                message: e.toString(),
+                type: SnackbarType.error,
+              );
+            }
+          }
         },
       ),
     );
@@ -287,7 +322,7 @@ class _NewReimbursementScreenState extends State<NewReimbursementScreen> {
         border: Border.all(color: AppColors.borderLight),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
