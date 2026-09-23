@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:gal/gal.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/currency_formatter.dart';
@@ -161,10 +162,7 @@ class ReimbursementRepository {
     try {
       Directory? downloadDir;
       if (Platform.isAndroid) {
-        downloadDir = Directory('/storage/emulated/0/Download');
-        if (!await downloadDir.exists()) {
-          downloadDir = await getExternalStorageDirectory();
-        }
+        downloadDir = await getExternalStorageDirectory();
       } else {
         downloadDir = await getApplicationDocumentsDirectory();
       }
@@ -178,6 +176,21 @@ class ReimbursementRepository {
         Uri.encodeFull(url), 
         savePath,
       );
+      
+      if (Platform.isAndroid || Platform.isIOS) {
+        final lowerName = fileName.toLowerCase();
+        if (lowerName.endsWith('.jpg') || 
+            lowerName.endsWith('.jpeg') || 
+            lowerName.endsWith('.png') || 
+            lowerName.endsWith('.gif') || 
+            lowerName.endsWith('.webp')) {
+          try {
+            await Gal.putImage(savePath);
+          } catch (e) {
+            debugPrint('Gal putImage error: $e');
+          }
+        }
+      }
       
       return savePath;
     } catch (e) {
