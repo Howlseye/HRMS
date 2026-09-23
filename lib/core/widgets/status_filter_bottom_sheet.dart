@@ -7,11 +7,13 @@ import '../theme/app_text_styles.dart';
 class StatusFilterBottomSheet extends StatefulWidget {
   final String initialStatus;
   final ValueChanged<String> onStatusSelected;
+  final List<String>? options;
 
   const StatusFilterBottomSheet({
     super.key,
     required this.initialStatus,
     required this.onStatusSelected,
+    this.options,
   });
 
   @override
@@ -21,17 +23,18 @@ class StatusFilterBottomSheet extends StatefulWidget {
 class _StatusFilterBottomSheetState extends State<StatusFilterBottomSheet> {
   late String _selectedStatus;
 
-  final List<String> _statuses = [
-    AppStrings.allStatus,
-    AppStrings.statusWaitingEnum,
-    AppStrings.statusApprovedEnum,
-    AppStrings.statusRejectedEnum,
-  ];
+  late List<String> _statuses;
 
   @override
   void initState() {
     super.initState();
     _selectedStatus = widget.initialStatus;
+    _statuses = widget.options ?? [
+      AppStrings.allStatus,
+      AppStrings.statusWaitingEnum,
+      AppStrings.statusApprovedEnum,
+      AppStrings.statusRejectedEnum,
+    ];
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
@@ -8,9 +9,9 @@ import '../../../core/widgets/app_popup.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../widgets/leave_card.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/leave_repository.dart';
 import '../providers/leave_provider.dart';
+import '../../employee/providers/current_employee_provider.dart';
 
 class LeaveDetailArgs {
   final String title;
@@ -37,54 +38,6 @@ class LeaveDetailScreen extends ConsumerWidget {
 
   const LeaveDetailScreen({super.key, required this.args});
 
-  String _getStatusAlertText() {
-    switch (args.status) {
-      case LeaveStatus.waiting:
-        return AppStrings.statusWaiting;
-      case LeaveStatus.approved:
-        return AppStrings.statusApproved;
-      case LeaveStatus.rejected:
-        return AppStrings.statusRejected;
-      case LeaveStatus.cancelled:
-        return AppStrings.statusCancelled;
-    }
-  }
-
-  Color _getStatusColor() {
-    switch (args.status) {
-      case LeaveStatus.waiting:
-        return AppColors.iconYellow;
-      case LeaveStatus.approved:
-        return AppColors.textSuccess;
-      case LeaveStatus.rejected:
-      case LeaveStatus.cancelled:
-        return AppColors.textDanger;
-    }
-  }
-
-  Color _getStatusBgColor() {
-    switch (args.status) {
-      case LeaveStatus.waiting:
-        return AppColors.menuBgOrangeLight;
-      case LeaveStatus.approved:
-        return AppColors.menuBgGreen;
-      case LeaveStatus.rejected:
-      case LeaveStatus.cancelled:
-        return AppColors.menuBgPink;
-    }
-  }
-
-  IconData _getStatusIcon() {
-    switch (args.status) {
-      case LeaveStatus.waiting:
-        return Icons.access_time_filled;
-      case LeaveStatus.approved:
-        return Icons.check_circle_outline;
-      case LeaveStatus.rejected:
-      case LeaveStatus.cancelled:
-        return Icons.error_outline;
-    }
-  }
 
   String _getStatusTitle() {
     switch (args.status) {
@@ -121,31 +74,7 @@ class LeaveDetailScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
-              decoration: BoxDecoration(
-                color: _getStatusBgColor(),
-                border: Border.all(color: _getStatusColor().withAlpha(127)),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    _getStatusIcon(),
-                    color: _getStatusColor(),
-                    size: 16,
-                  ),
-                  const SizedBox(width: 7),
-                  Text(
-                    _getStatusAlertText(),
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: _getStatusColor(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
+
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -166,6 +95,30 @@ class LeaveDetailScreen extends ConsumerWidget {
                   const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
                   _buildDetailRow(AppStrings.leaveSubmissionDate, args.submissionDate),
                   const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
+                  ref.watch(currentEmployeeProvider).when(
+                    data: (employee) => Column(
+                      children: [
+                        _buildDetailRow(AppStrings.namaLengkap, employee.name),
+                        const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
+                        _buildDetailRow(AppStrings.perusahaan, (employee.company?.isEmpty ?? true) ? '-' : employee.company!),
+                        const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
+                        _buildDetailRow(AppStrings.departemen, employee.placement.isEmpty ? '-' : employee.placement),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                    loading: () => const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                    error: (_, __) => const SizedBox(height: 24),
+                  ),
+                  Text(
+                    AppStrings.detailPengajuan,
+                    style: AppTextStyles.bodyMediumBold.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   _buildDetailRow(AppStrings.leaveType, args.leaveType),
                   const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
                   _buildDetailRow(AppStrings.leaveStartDate, args.startDate),

@@ -161,6 +161,88 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
                         ),
                       ),
                       const SizedBox(height: 16),
+                      ref.watch(currentEmployeeProvider).when(
+                        data: (employee) => Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.bgWhite,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: AppColors.borderLight),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                decoration: const BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: AppColors.borderLight)),
+                                ),
+                                child: Text(
+                                  AppStrings.infoPengaju,
+                                  style: AppTextStyles.bodySmallBold.copyWith(
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          AppStrings.namaLengkap,
+                                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.iconGray),
+                                        ),
+                                        Text(
+                                          employee.name,
+                                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          AppStrings.perusahaan,
+                                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.iconGray),
+                                        ),
+                                        Text(
+                                          (employee.company?.isEmpty ?? true) ? '-' : employee.company!,
+                                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          AppStrings.departemen,
+                                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.iconGray),
+                                        ),
+                                        Text(
+                                          employee.placement.isEmpty ? '-' : employee.placement,
+                                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        loading: () => const Padding(
+                          padding: EdgeInsets.only(bottom: 16),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                        error: (_, __) => const SizedBox(height: 16),
+                      ),
                       if (_addedItems.isEmpty)
                         Expanded(
                           child: Center(

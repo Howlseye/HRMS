@@ -35,12 +35,8 @@ class LeaveRepository {
 
   Future<void> cancelLeave(String name) async {
     try {
-      await _dio.post(
-        ApiEndpoints.cancelLeave,
-        data: {
-          "doctype": "Leave Application",
-          "name": name,
-        },
+      await _dio.delete(
+        ApiEndpoints.getLeaveDetail.replaceAll('{id}', name),
       );
     } catch (e) {
       throw Exception(AppStrings.errorServerSide);

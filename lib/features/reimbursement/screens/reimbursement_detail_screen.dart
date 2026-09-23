@@ -13,6 +13,7 @@ import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/shared_prefs_provider.dart';
 import '../../auth/providers/auth_session_provider.dart';
+import '../../employee/providers/current_employee_provider.dart';
 import '../models/reimbursement_model.dart';
 import '../repositories/reimbursement_repository.dart';
 import '../providers/reimbursement_provider.dart';
@@ -25,38 +26,6 @@ class ReimbursementDetailScreen extends ConsumerWidget {
     required this.reimbursement,
   });
 
-  Color _getStatusColor() {
-    switch (reimbursement.status) {
-      case ReimbursementStatus.waiting:
-        return AppColors.iconYellow;
-      case ReimbursementStatus.approved:
-        return AppColors.textSuccess;
-      case ReimbursementStatus.rejected:
-        return AppColors.textDanger;
-    }
-  }
-
-  Color _getStatusBgColor() {
-    switch (reimbursement.status) {
-      case ReimbursementStatus.waiting:
-        return AppColors.menuBgOrangeLight;
-      case ReimbursementStatus.approved:
-        return AppColors.menuBgGreen;
-      case ReimbursementStatus.rejected:
-        return AppColors.menuBgPink;
-    }
-  }
-
-  String _getStatusText() {
-    switch (reimbursement.status) {
-      case ReimbursementStatus.waiting:
-        return AppStrings.statusWaiting;
-      case ReimbursementStatus.approved:
-        return AppStrings.statusApproved;
-      case ReimbursementStatus.rejected:
-        return AppStrings.statusRejected;
-    }
-  }
 
   String _getStatusTitleText() {
     switch (reimbursement.status) {
@@ -104,9 +73,7 @@ class ReimbursementDetailScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildStatusAlert(),
-              const SizedBox(height: 12),
-              _buildSummaryCard(),
+              _buildSummaryCard(context, ref),
               const SizedBox(height: 12),
               _buildDetailsCard(context, ref),
             ],
@@ -124,36 +91,8 @@ class ReimbursementDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusAlert() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
-      decoration: BoxDecoration(
-        color: _getStatusBgColor(),
-        border: Border.all(color: _getStatusColor()),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.access_time, 
-            color: _getStatusColor(),
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              _getStatusText(),
-              style: AppTextStyles.bodySmall.copyWith(
-                color: _getStatusColor(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildSummaryCard() {
+  Widget _buildSummaryCard(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -175,7 +114,30 @@ class ReimbursementDetailScreen extends ConsumerWidget {
           const Divider(color: AppColors.borderLight, height: 1, thickness: 1),
           const SizedBox(height: 12),
           _buildRow(AppStrings.tanggalPengajuan, reimbursement.date),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
+          const Divider(color: AppColors.borderLight, height: 1, thickness: 1),
+          const SizedBox(height: 12),
+          ref.watch(currentEmployeeProvider).when(
+            data: (employee) => Column(
+              children: [
+                _buildRow(AppStrings.namaLengkap, employee.name),
+                const SizedBox(height: 12),
+                const Divider(color: AppColors.borderLight, height: 1, thickness: 1),
+                const SizedBox(height: 12),
+                _buildRow(AppStrings.perusahaan, (employee.company?.isEmpty ?? true) ? '-' : employee.company!),
+                const SizedBox(height: 12),
+                const Divider(color: AppColors.borderLight, height: 1, thickness: 1),
+                const SizedBox(height: 12),
+                _buildRow(AppStrings.departemen, employee.placement.isEmpty ? '-' : employee.placement),
+                const SizedBox(height: 20),
+              ],
+            ),
+            loading: () => const Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (error, stackTrace) => const SizedBox(height: 20),
+          ),
           Text(
             AppStrings.jumlahDisetujui,
             style: AppTextStyles.bodyMediumBold.copyWith(
@@ -397,6 +359,85 @@ class ReimbursementDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildAttachmentRow(BuildContext context, WidgetRef ref, ReimbursementItemModel item) {
+    if (item.attachmentPath == null || item.attachmentPath!.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.lampiran,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.iconGray,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            AppStrings.none,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
+      );
+    }
+
+    final prefs = ref.read(sharedPreferencesProvider);
+    final session = ref.read(authSessionProvider);
+    final sid = session['sid'] ?? prefs.getString('sid');
+    final cookie = (sid != null && sid.isNotEmpty) ? 'sid=$sid' : null;
+
+    final baseUrl = dotenv.env['BASE_URL'] ?? '';
+    final imageUrl = '$baseUrl${item.attachmentPath}';
+    final isPdf = item.attachmentName.toLowerCase().endsWith('.pdf') || (item.attachmentPath?.toLowerCase().endsWith('.pdf') ?? false);
+
+    if (isPdf) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.lampiran,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.iconGray,
+            ),
+          ),
+          const SizedBox(height: 4),
+          GestureDetector(
+            onTap: () {
+              if (item.attachmentName.isNotEmpty && item.attachmentPath != null) {
+                final prefs = ref.read(sharedPreferencesProvider);
+                final session = ref.read(authSessionProvider);
+                final sid = session['sid'] ?? prefs.getString('sid');
+                final cookie = (sid != null && sid.isNotEmpty) ? 'sid=$sid' : null;
+                final baseUrl = dotenv.env['BASE_URL'] ?? '';
+                final imageUrl = '$baseUrl${item.attachmentPath}';
+                _showAttachmentPopup(context, ref, item, imageUrl, isPdf: true, cookie: cookie);
+              }
+            },
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    item.attachmentName.split('/').last,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textPrimary,
+                      decoration: TextDecoration.underline,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.open_in_new,
+                  size: 12,
+                  color: AppColors.textPrimary,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -406,55 +447,44 @@ class ReimbursementDetailScreen extends ConsumerWidget {
             color: AppColors.iconGray,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            if (item.attachmentName.isNotEmpty && item.attachmentPath != null) {
-              _showAttachmentPopup(context, ref, item);
-            }
+            _showAttachmentPopup(context, ref, item, imageUrl, isPdf: isPdf, cookie: cookie);
           },
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  item.attachmentName.isEmpty ? AppStrings.none : item.attachmentName.split('/').last,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textPrimary,
-                    decoration: item.attachmentName.isEmpty ? TextDecoration.none : TextDecoration.underline,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.bgLight,
+                border: Border.all(color: AppColors.borderLight),
+                borderRadius: BorderRadius.circular(8),
               ),
-              if (item.attachmentName.isNotEmpty) ...[
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.open_in_new,
-                  size: 12,
-                  color: AppColors.textPrimary,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                httpHeaders: cookie != null ? {'Cookie': cookie} : null,
+                placeholder: (context, url) => const Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Center(child: CircularProgressIndicator()),
                 ),
-              ],
-            ],
+                errorWidget: (context, url, error) => const Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Icon(Icons.error, color: AppColors.textDanger),
+                ),
+                fit: BoxFit.fitWidth,
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  void _showAttachmentPopup(BuildContext context, WidgetRef ref, ReimbursementItemModel item) {
-    final prefs = ref.read(sharedPreferencesProvider);
-    final session = ref.read(authSessionProvider);
-    final sid = session['sid'] ?? prefs.getString('sid');
-    final cookie = (sid != null && sid.isNotEmpty) ? 'sid=$sid' : null;
-
+  void _showAttachmentPopup(BuildContext context, WidgetRef ref, ReimbursementItemModel item, String imageUrl, {bool isPdf = false, String? cookie}) {
     showDialog(
       context: context,
       builder: (ctx) {
-        final baseUrl = dotenv.env['BASE_URL'] ?? '';
-        final imageUrl = '$baseUrl${item.attachmentPath}';
-        
-        final isPdf = item.attachmentName.toLowerCase().endsWith('.pdf') || (item.attachmentPath?.toLowerCase().endsWith('.pdf') ?? false);
-        
         return Dialog(
           backgroundColor: AppColors.bgWhite,
           shape: RoundedRectangleBorder(

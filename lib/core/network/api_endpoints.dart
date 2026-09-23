@@ -27,6 +27,7 @@ class ApiEndpoints {
   //Leave
   static const String getLeaveAllocations = "method/hrms.hr.doctype.leave_application.leave_application.get_leave_details?employee={employee_id}&date={today_date}";
   static const String getLeave = 'resource/Leave Application?fields=["status", "name", "posting_date", "leave_type", "from_date", "to_date", "total_leave_days", "description"]';
+  static const String getLeaveDetail = 'resource/Leave Application/{id}';
   static const String getLeaveTypes = 'resource/Leave Type?fields=["*"]';
   static const String createLeave = 'resource/Leave Application';
   static const String cancelLeave = 'method/frappe.client.cancel';

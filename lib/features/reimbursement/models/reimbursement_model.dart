@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 enum ReimbursementStatus { waiting, approved, rejected }
 
 class ReimbursementItemModel {
@@ -62,11 +64,19 @@ class ReimbursementModel {
         ? expenses.map((e) => ReimbursementItemModel.fromJson(e as Map<String, dynamic>)).toList()
         : <ReimbursementItemModel>[];
 
+    String formattedDate = json['posting_date'] ?? '';
+    if (formattedDate.isNotEmpty) {
+      try {
+        final pDate = DateTime.parse(formattedDate);
+        formattedDate = DateFormat('d MMM yyyy').format(pDate);
+      } catch (_) {}
+    }
+
     return ReimbursementModel(
       id: json['name'] ?? '',
       title: json['name'] ?? '',
       status: _parseStatus(json['approval_status'] ?? json['status']),
-      date: json['posting_date'] ?? '',
+      date: formattedDate,
       items: itemsList,
     );
   }

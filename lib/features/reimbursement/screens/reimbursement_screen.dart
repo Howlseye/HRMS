@@ -71,18 +71,10 @@ class _ReimbursementScreenState extends ConsumerState<ReimbursementScreen> {
               child: ref.watch(reimbursementProvider).when(
                     data: (reimbursements) {
                       final filteredReimbursements = reimbursements.where((r) {
-                        final monthMap = {
-                          'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'Mei': 5, 'May': 5, 'Jun': 6,
-                          'Jul': 7, 'Aug': 8, 'Agt': 8, 'Sep': 9, 'Oct': 10, 'Okt': 10, 'Nov': 11, 'Dec': 12, 'Des': 12
-                        };
                         try {
-                          final parts = r.date.split(' ');
-                          if (parts.length == 3) {
-                            final month = monthMap[parts[1]] ?? 0;
-                            final year = int.tryParse(parts[2]) ?? 0;
-                            if (month != _filterDate.month || year != _filterDate.year) {
-                              return false;
-                            }
+                          final rDate = DateTime.parse(r.date);
+                          if (rDate.month != _filterDate.month || rDate.year != _filterDate.year) {
+                            return false;
                           }
                         } catch (_) {}
 

@@ -173,6 +173,7 @@ class AppStrings {
 
   // Detail Leave Screen
   static const String detailLeaveTitle = 'Detail Pengajuan Cuti';
+  static const String detailPengajuan = 'Detail pengajuan';
   static const String waitingApproval = 'Menunggu Persetujuan';
   static const String leaveApproved = 'Pengajuan Disetujui';
   static const String leaveRejected = 'Pengajuan Ditolak';
@@ -236,6 +237,10 @@ class AppStrings {
   static const String kembali = 'Kembali';
   
   static const String newReimburseTitle = 'Pengajuan Reimburse';
+  static const String infoPengaju = 'Informasi Pengaju';
+  static const String namaLengkap = 'Nama Lengkap';
+  static const String perusahaan = 'Perusahaan';
+  static const String departemen = 'Departemen';
   static const String addBenefitSubtitle = 'Tambahkan rincian benefit yang ingin diajukan';
   static const String emptyBenefitDetail = 'Belum ada rincian benefit';
   static const String addDetail = 'Tambahkan rincian';

@@ -126,6 +126,7 @@ class ReimbursementRepository {
           'base_sanctioned_amount': parsedAmount,
           'description': item.description,
           'custom_transfer_proof': customTransferProof,
+          'custom_status_approval': 'Pending',
         });
         totalAmount += parsedAmount;
       }
@@ -160,7 +161,10 @@ class ReimbursementRepository {
     try {
       Directory? downloadDir;
       if (Platform.isAndroid) {
-        downloadDir = await getExternalStorageDirectory();
+        downloadDir = Directory('/storage/emulated/0/Download');
+        if (!await downloadDir.exists()) {
+          downloadDir = await getExternalStorageDirectory();
+        }
       } else {
         downloadDir = await getApplicationDocumentsDirectory();
       }
