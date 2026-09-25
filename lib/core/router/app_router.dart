@@ -24,6 +24,9 @@ import '../../core/widgets/success_screen.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../features/announcement/screens/announcement_screen.dart';
+import '../../features/announcement/screens/announcement_detail_screen.dart';
+import '../../features/announcement/models/announcement_model.dart';
 
 class AppRouter {
   AppRouter._();
@@ -62,6 +65,25 @@ class AppRouter {
           state: state,
           child: const SplashScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/announcement',
+        pageBuilder: (context, state) => _buildPageWithDefaultTransition(
+          context: context,
+          state: state,
+          child: const AnnouncementScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/announcement/detail',
+        pageBuilder: (context, state) {
+          final args = state.extra as AnnouncementModel;
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: AnnouncementDetailScreen(announcement: args),
+          );
+        },
       ),
       GoRoute(
         path: '/attendance',

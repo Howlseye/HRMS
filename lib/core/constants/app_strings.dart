@@ -78,6 +78,7 @@ class AppStrings {
   static const String emptyActivity = 'Tidak ada aktivitas hari ini';
   static const String viewAll = 'Lihat Semua';
   static const String announcement = 'Pengumuman';
+  static const String detailPengumuman = 'Detail Pengumuman';
   static const String noAnnouncement = 'Belum ada pengumuman';
   static const String noAnnouncementSub = 'Tidak ada pengumuman yang tersedia untuk saat ini.';
   // Attendance Success Screen

@@ -12,7 +12,8 @@ import '../widgets/home_header.dart';
 import '../../../core/widgets/attendance_card.dart';
 import '../widgets/quick_action_menu.dart';
 import '../../../core/widgets/attendance_activity_card.dart';
-import '../widgets/announcement_card.dart';
+import '../../announcement/providers/announcement_provider.dart';
+import '../../announcement/widgets/announcement_card.dart';
 import '../../employee/providers/current_employee_provider.dart';
 import '../../attendance/providers/current_shift_provider.dart';
 
@@ -131,7 +132,9 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   _buildSectionHeader(
                     title: AppStrings.announcement,
-                    onTap: () {},
+                    onTap: () {
+                      context.push('/announcement');
+                    },
                   ),
                   if (announcements.isEmpty)
                     Padding(
@@ -162,10 +165,11 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     )
                   else
-                    ...announcements.map((announcement) => AnnouncementCard(
+                    ...announcements.take(3).map((announcement) => AnnouncementCard(
                           title: announcement.title,
                           description: announcement.description,
                           date: announcement.date,
+                          onTap: () => context.push('/announcement/detail', extra: announcement),
                         )),
                   const SizedBox(height: 32),
                 ],

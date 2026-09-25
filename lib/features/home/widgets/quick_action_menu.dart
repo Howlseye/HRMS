@@ -44,7 +44,9 @@ class QuickActionMenu extends StatelessWidget {
             icon: 'assets/icons/pengumuman_icon.png',
             label: AppStrings.menuPengumuman,
             backgroundColor: AppColors.menuBgYellow,
-            onTap: () {},
+            onTap: () {
+              context.push('/announcement');
+            },
           ),
         ],
       ),
