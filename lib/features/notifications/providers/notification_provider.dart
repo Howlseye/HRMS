@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/notification_model.dart';
 
-class InboxNotifier extends Notifier<List<NotificationModel>> {
+class NotificationNotifier extends Notifier<List<NotificationModel>> {
   @override
   List<NotificationModel> build() {
     return [];
@@ -12,6 +12,6 @@ class InboxNotifier extends Notifier<List<NotificationModel>> {
   }
 }
 
-final inboxProvider = NotifierProvider<InboxNotifier, List<NotificationModel>>(() {
-  return InboxNotifier();
+final notificationProvider = NotifierProvider<NotificationNotifier, List<NotificationModel>>(() {
+  return NotificationNotifier();
 });

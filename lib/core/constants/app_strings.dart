@@ -89,7 +89,7 @@ class AppStrings {
   // Bottom Navigation
   static const String navHome = 'Home';
   static const String navEmployee = 'Employee';
-  static const String navInbox = 'Inbox';
+  static const String navNotification = 'Notifikasi';
   static const String navAccount = 'Account';
   // Account Screen
   static const String menuAccount = 'Account';
@@ -103,10 +103,10 @@ class AppStrings {
   static const String reimbursement = 'Rembursement';
   static const String logout = 'Logout';
 
-  // Inbox Screen
-  static const String menuInbox = 'Inbox';
-  static const String noInboxData = 'Belum ada notifikasi';
-  static const String noInboxDataDesc = 'Anda belum memiliki notifikasi\napapun saat ini.';
+  // Notification Screen
+  static const String menuNotification = 'Notification';
+  static const String noNotificationData = 'Belum ada notifikasi';
+  static const String noNotificationDataDesc = 'Anda belum memiliki notifikasi\napapun saat ini.';
   static const String markAllRead = 'Tandai Sudah Dibaca';
   static const String statusApproved = 'Approved';
   static const String statusRejected = 'Rejected';
@@ -131,7 +131,7 @@ class AppStrings {
 
   // Popups / Dialogs
   static const String popupMarkAllReadTitle = 'Tandai Semua Sudah Dibaca';
-  static const String popupMarkAllReadDesc = 'Apakah Anda yakin ingin menandai semua inbox sebagai sudah dibaca? Tindakan ini tidak dapat dibatalkan.';
+  static const String popupMarkAllReadDesc = 'Apakah Anda yakin ingin menandai semua notifikasi sebagai sudah dibaca? Tindakan ini tidak dapat dibatalkan.';
   static const String popupConfirm = 'Konfirmasi';
   static const String popupCancel = 'Batal';
   static const String popupCancelLeaveTitle = 'Batalkan Pengajuan?';

@@ -35,7 +35,7 @@ class AppColors {
 
   static const Color bgLight = Color(0xFFF8FAFC);
   static const Color bgWhite = Color(0xFFFFFFFF);
-  static const Color bgInboxUnread = Color(0xFFF0F7FF);
+  static const Color bgNotificationUnread = Color(0xFFF0F7FF);
 
 
   static const Color borderLight = Color(0xFFE7E8EC);

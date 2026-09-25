@@ -3,7 +3,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../home/screens/home_screen.dart';
 import '../../employee/screens/employee_screen.dart';
-import '../../inbox/screens/inbox_screen.dart';
+import '../../notifications/screens/notification_screen.dart';
 import '../../account/screens/account_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const EmployeeScreen(),
-    const InboxScreen(),
+    const NotificationScreen(),
     const AccountScreen(),
   ];
 
@@ -60,9 +60,9 @@ class _MainScreenState extends State<MainScreen> {
             label: AppStrings.navEmployee,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.mail_outline),
-            activeIcon: Icon(Icons.mail),
-            label: AppStrings.navInbox,
+            icon: Icon(Icons.notifications_none),
+            activeIcon: Icon(Icons.notifications),
+            label: AppStrings.navNotification,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),

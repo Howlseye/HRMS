@@ -32,7 +32,7 @@ class NotificationCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: notification.isRead ? AppColors.bgWhite : AppColors.bgInboxUnread,
+        color: notification.isRead ? AppColors.bgWhite : AppColors.bgNotificationUnread,
         border: const Border(
           bottom: BorderSide(color: AppColors.borderLight),
         ),

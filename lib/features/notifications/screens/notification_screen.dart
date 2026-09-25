@@ -4,16 +4,16 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../providers/inbox_provider.dart';
+import '../providers/notification_provider.dart';
 import '../widgets/notification_card.dart';
 import '../../../core/widgets/app_popup.dart';
 
-class InboxScreen extends ConsumerWidget {
-  const InboxScreen({super.key});
+class NotificationScreen extends ConsumerWidget {
+  const NotificationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifications = ref.watch(inboxProvider);
+    final notifications = ref.watch(notificationProvider);
     final unreadCount = notifications.where((n) => !n.isRead).length;
 
     return Scaffold(
@@ -28,7 +28,7 @@ class InboxScreen extends ConsumerWidget {
                 children: [
                   RichText(
                     text: TextSpan(
-                      text: '${AppStrings.menuInbox} ',
+                      text: '${AppStrings.menuNotification} ',
                       style: AppTextStyles.headingExtraBold.copyWith(
                         color: AppColors.textPrimary,
                       ),
@@ -54,7 +54,7 @@ class InboxScreen extends ConsumerWidget {
                           secondaryButtonText: AppStrings.popupCancel,
                           onPrimaryPressed: () {
                             Navigator.pop(context);
-                            ref.read(inboxProvider.notifier).markAllAsRead();
+                            ref.read(notificationProvider.notifier).markAllAsRead();
                           },
                           onSecondaryPressed: () {
                             Navigator.pop(context);
@@ -85,7 +85,7 @@ class InboxScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            AppStrings.noInboxData,
+                            AppStrings.noNotificationData,
                             style: AppTextStyles.titleBold.copyWith(
                               color: AppColors.textPrimary,
                             ),
@@ -93,7 +93,7 @@ class InboxScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            AppStrings.noInboxDataDesc,
+                            AppStrings.noNotificationDataDesc,
                             style: AppTextStyles.bodyMedium.copyWith(
                               color: AppColors.textSecondary,
                             ),
