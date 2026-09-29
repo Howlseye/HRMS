@@ -8,6 +8,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/month_year_filter_bar.dart';
 import '../providers/attendance_log_provider.dart';
+import '../widgets/attendance_stat_card.dart';
 class AttendanceLogScreen extends ConsumerWidget {
   const AttendanceLogScreen({super.key});
 
@@ -63,7 +64,7 @@ class AttendanceLogScreen extends ConsumerWidget {
                             Row(
                               children: [
                                 Expanded(
-                                  child: _buildStatCard(
+                                  child: AttendanceStatCard(
                                     title: AppStrings.statCuti,
                                     value: cutiCount.toString(),
                                     icon: Icons.person_remove_outlined,
@@ -74,7 +75,7 @@ class AttendanceLogScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 Expanded(
-                                  child: _buildStatCard(
+                                  child: AttendanceStatCard(
                                     title: AppStrings.statTerlambat,
                                     value: terlambatCount.toString(),
                                     icon: Icons.access_time_outlined,
@@ -89,7 +90,7 @@ class AttendanceLogScreen extends ConsumerWidget {
                             Row(
                               children: [
                                 Expanded(
-                                  child: _buildStatCard(
+                                  child: AttendanceStatCard(
                                     title: AppStrings.statPulangAwal,
                                     value: pulangAwalCount.toString(),
                                     icon: Icons.directions_run,
@@ -100,7 +101,7 @@ class AttendanceLogScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 Expanded(
-                                  child: _buildStatCard(
+                                  child: AttendanceStatCard(
                                     title: AppStrings.statTidakAbsen,
                                     value: tidakAbsenCount.toString(),
                                     icon: Icons.desktop_access_disabled,
@@ -225,71 +226,6 @@ class AttendanceLogScreen extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color iconColor,
-    required Color iconBgColor,
-    required bool hasBorderRight,
-    required bool hasBorderBottom,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border(
-          right: hasBorderRight ? const BorderSide(color: AppColors.borderLight) : BorderSide.none,
-          bottom: hasBorderBottom ? const BorderSide(color: AppColors.borderLight) : BorderSide.none,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: iconBgColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: iconColor, size: 24),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      value,
-                      style: AppTextStyles.headingSmall.copyWith(
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(
-                      Icons.check_circle,
-                      color: AppColors.textSuccess,
-                      size: 12,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

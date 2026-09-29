@@ -11,6 +11,7 @@ import '../providers/home_provider.dart';
 import '../widgets/home_header.dart';
 import '../../../core/widgets/attendance_card.dart';
 import '../widgets/quick_action_menu.dart';
+import '../widgets/home_section_header.dart';
 import '../../../core/widgets/attendance_activity_card.dart';
 import '../../announcement/providers/announcement_provider.dart';
 import '../../announcement/widgets/announcement_card.dart';
@@ -67,7 +68,7 @@ class HomeScreen extends ConsumerWidget {
                   HomeHeader(employee: employee),
                   const AttendanceCard(),
                   const QuickActionMenu(),
-                  _buildSectionHeader(
+                  HomeSectionHeader(
                     title: AppStrings.todaysActivity,
                     onTap: () {
                       context.push('/attendance-log');
@@ -130,7 +131,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildSectionHeader(
+                  HomeSectionHeader(
                     title: AppStrings.announcement,
                     onTap: () {
                       context.push('/announcement');
@@ -181,40 +182,4 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader({required String title, required VoidCallback onTap}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: AppTextStyles.headingSmall.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(4.0),
-            child: Row(
-              children: [
-                Text(
-                  AppStrings.viewAll,
-                  style: AppTextStyles.bodySmallBold.copyWith(
-                    color: AppColors.primaryBlueStart,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: AppColors.primaryBlueStart,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

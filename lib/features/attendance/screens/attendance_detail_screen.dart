@@ -7,6 +7,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../models/attendance_log_entry.dart';
 import '../providers/attendance_log_provider.dart';
+import '../widgets/attendance_detail_field.dart';
 
 class AttendanceDetailScreen extends ConsumerWidget {
   final AttendanceLogEntry logEntry;
@@ -57,13 +58,13 @@ class AttendanceDetailScreen extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                _buildDetailField(
+                AttendanceDetailField(
                   label: AppStrings.checkIn,
                   value: logEntry.checkIn,
                   valueColor: logEntry.isLate ? AppColors.textDanger : AppColors.textPrimary,
                 ),
                 const SizedBox(height: 16),
-                _buildDetailField(
+                AttendanceDetailField(
                   label: AppStrings.checkOut,
                   value: logEntry.checkOut,
                   valueColor: logEntry.isEarlyOut ? AppColors.textDanger : AppColors.textPrimary,
@@ -82,14 +83,14 @@ class AttendanceDetailScreen extends ConsumerWidget {
 
                     return Column(
                       children: [
-                        _buildDetailField(
+                        AttendanceDetailField(
                           label: AppStrings.reasonLate,
                           value: lateReason,
                           isBoxed: true,
                           isPlaceholder: lateReason == AppStrings.noReason || lateReason == AppStrings.notLate,
                         ),
                         const SizedBox(height: 16),
-                        _buildDetailField(
+                        AttendanceDetailField(
                           label: AppStrings.reasonEarlyOut,
                           value: earlyOutReason,
                           isBoxed: true,
@@ -117,43 +118,6 @@ class AttendanceDetailScreen extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailField({
-    required String label,
-    required String value,
-    Color? valueColor,
-    bool isBoxed = false,
-    bool isPlaceholder = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: double.infinity,
-          constraints: BoxConstraints(minHeight: isBoxed ? 96.0 : 0.0),
-          padding: isBoxed ? const EdgeInsets.all(12) : EdgeInsets.zero,
-          decoration: isBoxed
-              ? BoxDecoration(
-                  color: AppColors.menuBgGray,
-                  border: Border.all(color: AppColors.borderLight),
-                  borderRadius: BorderRadius.circular(6),
-                )
-              : null,
-          child: Text(
-            value,
-            style: AppTextStyles.title.copyWith(
-              color: valueColor ?? (isPlaceholder ? AppColors.iconDisabled : AppColors.textPrimary),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
