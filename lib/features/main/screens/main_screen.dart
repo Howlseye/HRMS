@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../home/screens/home_screen.dart';
-import '../../employee/screens/employee_screen.dart';
 import '../../notifications/screens/notification_screen.dart';
 import '../../account/screens/account_screen.dart';
 
@@ -18,7 +17,6 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const EmployeeScreen(),
     const NotificationScreen(),
     const AccountScreen(),
   ];
@@ -53,11 +51,6 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
             label: AppStrings.navHome,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline),
-            activeIcon: Icon(Icons.people),
-            label: AppStrings.navEmployee,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications_none),

@@ -119,7 +119,7 @@ class _StatusFilterBottomSheetState extends State<StatusFilterBottomSheet> {
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

@@ -21,49 +21,56 @@ class AccountScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       body: SafeArea(
-        child: currentEmployeeAsync.when(
-          loading: () => Center(
-            child: Lottie.asset(
-              'assets/lottie/loading.json',
-              width: 150,
-            ),
-          ),
-          error: (error, stack) => Center(
+        child: CustomRefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(currentEmployeeProvider);
+            await Future.delayed(const Duration(seconds: 1));
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  AppStrings.errorServerSide,
-                  style: AppTextStyles.headingSmall.copyWith(color: AppColors.textDanger),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+                  child: Text(
+                    AppStrings.menuAccount,
+                    style: AppTextStyles.headingExtraBold.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  AppStrings.errorDataNotFound,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                ),
-              ],
-            ),
-          ),
-          data: (employee) => CustomRefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(currentEmployeeProvider);
-              await Future.delayed(const Duration(seconds: 1));
-            },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
-                    child: Text(
-                      AppStrings.menuAccount,
-                      style: AppTextStyles.headingExtraBold.copyWith(
-                        color: AppColors.textPrimary,
+                currentEmployeeAsync.when(
+                  loading: () => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24.0),
+                      child: Lottie.asset(
+                        'assets/lottie/loading.json',
+                        width: 150,
                       ),
                     ),
                   ),
-                  ProfileCard(employee: employee),
+                  error: (error, stack) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            AppStrings.errorServerSide,
+                            style: AppTextStyles.headingSmall.copyWith(color: AppColors.textDanger),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            AppStrings.errorDataNotFound,
+                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  data: (employee) => ProfileCard(employee: employee),
+                ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Text(
@@ -146,7 +153,6 @@ class AccountScreen extends ConsumerWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

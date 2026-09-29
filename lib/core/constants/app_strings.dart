@@ -272,6 +272,14 @@ class AppStrings {
   static const String statusApprovedEnum = 'Disetujui';
   static const String statusRejectedEnum = 'Ditolak';
   
+  // Reimbursement Statuses
+  static const String reimburseStatusDraft = 'Pending';
+  static const String reimburseStatusSubmitted = 'Approved';
+  static const String reimburseStatusCancelled = 'Cancelled';
+  static const String reimburseStatusPaid = 'Paid';
+  static const String reimburseStatusUnpaid = 'Unpaid';
+  static const String reimburseStatusRejected = 'Rejected';
+  
   static const String chooseAttachmentSource = 'Pilih Sumber Lampiran';
   static const String takePhoto = 'Ambil Foto';
   static const String useCameraDirectly = 'Gunakan kamera langsung';

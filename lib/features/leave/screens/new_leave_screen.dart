@@ -89,7 +89,7 @@ class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
     final List<String> leaveTypes = leaveAllocationsAsync.when(
       data: (response) => response.leaveAllocation.keys.toList(),
       loading: () => [],
-      error: (_, __) => [],
+      error: (error, stack) => [],
     );
 
     return Scaffold(

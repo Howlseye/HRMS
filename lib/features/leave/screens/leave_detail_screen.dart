@@ -38,7 +38,6 @@ class LeaveDetailScreen extends ConsumerWidget {
 
   const LeaveDetailScreen({super.key, required this.args});
 
-
   String _getStatusTitle() {
     switch (args.status) {
       case LeaveStatus.waiting:
@@ -74,126 +73,191 @@ class LeaveDetailScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.bgWhite,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _getStatusTitle(),
-                    style: AppTextStyles.titleBold.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildDetailRow(AppStrings.leaveId, args.title),
-                  const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
-                  _buildDetailRow(AppStrings.leaveSubmissionDate, args.submissionDate),
-                  const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
-                  ref.watch(currentEmployeeProvider).when(
-                    data: (employee) => Column(
-                      children: [
-                        _buildDetailRow(AppStrings.namaLengkap, employee.name),
-                        const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
-                        _buildDetailRow(AppStrings.perusahaan, (employee.company?.isEmpty ?? true) ? '-' : employee.company!),
-                        const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
-                        _buildDetailRow(AppStrings.departemen, employee.placement.isEmpty ? '-' : employee.placement),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
-                    loading: () => const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                    error: (_, __) => const SizedBox(height: 24),
-                  ),
-                  Text(
-                    AppStrings.detailPengajuan,
-                    style: AppTextStyles.bodyMediumBold.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildDetailRow(AppStrings.leaveType, args.leaveType),
-                  const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
-                  _buildDetailRow(AppStrings.leaveStartDate, args.startDate),
-                  const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
-                  _buildDetailColumn(AppStrings.leaveReason, args.reason),
-                  if (args.status == LeaveStatus.rejected && args.rejectReason != null) ...[
-                    const Divider(color: AppColors.menuBgGray, height: 24, thickness: 1),
-                    _buildDetailColumn(
-                      AppStrings.leaveRejectReason,
-                      args.rejectReason!,
-                      valueColor: AppColors.textDanger,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const Spacer(),
-            if (args.status == LeaveStatus.waiting)
-              SizedBox(
-                width: double.infinity,
-                height: 40,
-                child: OutlinedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AppPopup(
-                        svgAsset: 'assets/icons/popup_cancel_icon.svg',
-                        title: AppStrings.popupCancelLeaveTitle,
-                        description: AppStrings.popupCancelLeaveDesc,
-                        primaryButtonText: AppStrings.popupCancelLeaveConfirm,
-                        secondaryButtonText: AppStrings.popupCancel,
-                        primaryButtonColor: AppColors.textDanger,
-                        onPrimaryPressed: () async {
-                          Navigator.pop(context); // close popup
-                          try {
-                            await ref.read(leaveRepositoryProvider).cancelLeave(args.title);
-                            ref.invalidate(leaveProvider);
-                            if (context.mounted) {
-                              context.pop(); // close detail screen
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(e.toString())),
-                              );
-                            }
-                          }
-                        },
-                        onSecondaryPressed: () {
-                          Navigator.pop(context); // close popup
-                        },
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.bgWhite,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _getStatusTitle(),
+                              style: AppTextStyles.titleBold.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildDetailRow(AppStrings.leaveId, args.title),
+                            const Divider(
+                              color: AppColors.menuBgGray,
+                              height: 24,
+                              thickness: 1,
+                            ),
+                            _buildDetailRow(
+                              AppStrings.leaveSubmissionDate,
+                              args.submissionDate,
+                            ),
+                            const Divider(
+                              color: AppColors.menuBgGray,
+                              height: 24,
+                              thickness: 1,
+                            ),
+                            ref
+                                .watch(currentEmployeeProvider)
+                                .when(
+                                  data: (employee) => Column(
+                                    children: [
+                                      _buildDetailRow(
+                                        AppStrings.namaLengkap,
+                                        employee.name,
+                                      ),
+                                      const Divider(
+                                        color: AppColors.menuBgGray,
+                                        height: 24,
+                                        thickness: 1,
+                                      ),
+                                      _buildDetailRow(
+                                        AppStrings.perusahaan,
+                                        (employee.company?.isEmpty ?? true)
+                                            ? '-'
+                                            : employee.company!,
+                                      ),
+                                      const Divider(
+                                        color: AppColors.menuBgGray,
+                                        height: 24,
+                                        thickness: 1,
+                                      ),
+                                      _buildDetailRow(
+                                        AppStrings.departemen,
+                                        employee.placement.isEmpty
+                                            ? '-'
+                                            : employee.placement,
+                                      ),
+                                      const SizedBox(height: 24),
+                                    ],
+                                  ),
+                                  loading: () => const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                  error: (error, stack) => const SizedBox(height: 24),
+                                ),
+                            Text(
+                              AppStrings.detailPengajuan,
+                              style: AppTextStyles.bodyMediumBold.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildDetailRow(
+                              AppStrings.leaveType,
+                              args.leaveType,
+                            ),
+                            const Divider(
+                              color: AppColors.menuBgGray,
+                              height: 24,
+                              thickness: 1,
+                            ),
+                            _buildDetailRow(
+                              AppStrings.leaveStartDate,
+                              args.startDate,
+                            ),
+                            const Divider(
+                              color: AppColors.menuBgGray,
+                              height: 24,
+                              thickness: 1,
+                            ),
+                            _buildDetailColumn(
+                              AppStrings.leaveReason,
+                              args.reason,
+                            ),
+                            if (args.status == LeaveStatus.rejected &&
+                                args.rejectReason != null) ...[
+                              const Divider(
+                                color: AppColors.menuBgGray,
+                                height: 24,
+                                thickness: 1,
+                              ),
+                              _buildDetailColumn(
+                                AppStrings.leaveRejectReason,
+                                args.rejectReason!,
+                                valueColor: AppColors.textDanger,
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.textDanger),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  child: Text(
-                    AppStrings.cancelLeave,
-                    style: AppTextStyles.titleSemiBold.copyWith(
-                      color: AppColors.textDanger,
-                    ),
+                      const Spacer(),
+                      if (args.status == LeaveStatus.waiting)
+                        SizedBox(
+                          width: double.infinity,
+                          height: 40,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AppPopup(
+                                  svgAsset:
+                                      'assets/icons/popup_cancel_icon.svg',
+                                  title: AppStrings.popupCancelLeaveTitle,
+                                  description: AppStrings.popupCancelLeaveDesc,
+                                  primaryButtonText:
+                                      AppStrings.popupCancelLeaveConfirm,
+                                  secondaryButtonText: AppStrings.popupCancel,
+                                  primaryButtonColor: AppColors.textDanger,
+                                  onPrimaryPressed: () async {
+                                    Navigator.pop(context); // close popup
+                                    try {
+                                      await ref
+                                          .read(leaveRepositoryProvider)
+                                          .cancelLeave(args.title);
+                                      ref.invalidate(leaveProvider);
+                                      if (context.mounted) {
+                                        context.pop(); // close detail screen
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(content: Text(e.toString())),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  onSecondaryPressed: () {
+                                    Navigator.pop(context); // close popup
+                                  },
+                                ),
+                              );
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                color: AppColors.textDanger,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            child: Text(
+                              AppStrings.cancelLeave,
+                              style: AppTextStyles.titleSemiBold.copyWith(
+                                color: AppColors.textDanger,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
         ),
-      ),
-      ],
-      ),
-      ),
       ),
     );
   }
@@ -206,9 +270,7 @@ class LeaveDetailScreen extends ConsumerWidget {
           width: 152,
           child: Text(
             label,
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.iconGray,
-            ),
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.iconGray),
           ),
         ),
         Expanded(
@@ -230,9 +292,7 @@ class LeaveDetailScreen extends ConsumerWidget {
       children: [
         Text(
           label,
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.iconGray,
-          ),
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.iconGray),
         ),
         const SizedBox(height: 4),
         Text(

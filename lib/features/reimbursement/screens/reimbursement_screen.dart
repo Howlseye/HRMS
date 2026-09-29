@@ -34,6 +34,15 @@ class _ReimbursementScreenState extends ConsumerState<ReimbursementScreen> {
       builder: (context) {
         return StatusFilterBottomSheet(
           initialStatus: _selectedStatus,
+          options: const [
+            AppStrings.allStatus,
+            AppStrings.reimburseStatusDraft,
+            AppStrings.reimburseStatusSubmitted,
+            AppStrings.reimburseStatusCancelled,
+            AppStrings.reimburseStatusPaid,
+            AppStrings.reimburseStatusUnpaid,
+            AppStrings.reimburseStatusRejected,
+          ],
           onStatusSelected: (status) {
             setState(() {
               _selectedStatus = status;
@@ -79,9 +88,12 @@ class _ReimbursementScreenState extends ConsumerState<ReimbursementScreen> {
                         } catch (_) {}
 
                         if (_selectedStatus == AppStrings.allStatus) return true;
-                        if (_selectedStatus == AppStrings.statusWaitingEnum && r.status == ReimbursementStatus.waiting) return true;
-                        if (_selectedStatus == AppStrings.statusApprovedEnum && r.status == ReimbursementStatus.approved) return true;
-                        if (_selectedStatus == AppStrings.statusRejectedEnum && r.status == ReimbursementStatus.rejected) return true;
+                        if (_selectedStatus == AppStrings.reimburseStatusDraft && r.status == ReimbursementStatus.draft) return true;
+                        if (_selectedStatus == AppStrings.reimburseStatusSubmitted && r.status == ReimbursementStatus.submitted) return true;
+                        if (_selectedStatus == AppStrings.reimburseStatusCancelled && r.status == ReimbursementStatus.cancelled) return true;
+                        if (_selectedStatus == AppStrings.reimburseStatusPaid && r.status == ReimbursementStatus.paid) return true;
+                        if (_selectedStatus == AppStrings.reimburseStatusUnpaid && r.status == ReimbursementStatus.unpaid) return true;
+                        if (_selectedStatus == AppStrings.reimburseStatusRejected && r.status == ReimbursementStatus.rejected) return true;
                         return false;
                       }).toList();
 

@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-enum ReimbursementStatus { waiting, approved, rejected }
+enum ReimbursementStatus { draft, submitted, cancelled, paid, unpaid, rejected }
 
 class ReimbursementItemModel {
   final String name;
@@ -75,7 +75,7 @@ class ReimbursementModel {
     return ReimbursementModel(
       id: json['name'] ?? '',
       title: json['name'] ?? '',
-      status: _parseStatus(json['approval_status'] ?? json['status']),
+      status: _parseStatus(json['status']),
       date: formattedDate,
       items: itemsList,
     );
@@ -83,12 +83,22 @@ class ReimbursementModel {
 
   static ReimbursementStatus _parseStatus(String? status) {
     switch (status?.toLowerCase()) {
-      case 'approved':
-        return ReimbursementStatus.approved;
+      case 'draft':
+      case 'pending': // fallback
+        return ReimbursementStatus.draft;
+      case 'submitted':
+      case 'approved': // fallback
+        return ReimbursementStatus.submitted;
+      case 'cancelled':
+        return ReimbursementStatus.cancelled;
+      case 'paid':
+        return ReimbursementStatus.paid;
+      case 'unpaid':
+        return ReimbursementStatus.unpaid;
       case 'rejected':
         return ReimbursementStatus.rejected;
       default:
-        return ReimbursementStatus.waiting;
+        return ReimbursementStatus.draft;
     }
   }
 }

@@ -23,10 +23,16 @@ class ReimbursementCard extends StatelessWidget {
 
   Color _getStatusColor() {
     switch (status) {
-      case ReimbursementStatus.waiting:
+      case ReimbursementStatus.draft:
         return AppColors.iconYellow;
-      case ReimbursementStatus.approved:
+      case ReimbursementStatus.submitted:
+        return AppColors.primaryBlueStart;
+      case ReimbursementStatus.paid:
         return AppColors.textSuccess;
+      case ReimbursementStatus.unpaid:
+        return AppColors.iconPurple;
+      case ReimbursementStatus.cancelled:
+        return AppColors.iconGray;
       case ReimbursementStatus.rejected:
         return AppColors.textDanger;
     }
@@ -34,10 +40,16 @@ class ReimbursementCard extends StatelessWidget {
 
   Color _getStatusBgColor() {
     switch (status) {
-      case ReimbursementStatus.waiting:
+      case ReimbursementStatus.draft:
         return AppColors.menuBgOrangeLight;
-      case ReimbursementStatus.approved:
+      case ReimbursementStatus.submitted:
+        return AppColors.menuBgBlue;
+      case ReimbursementStatus.paid:
         return AppColors.menuBgGreen;
+      case ReimbursementStatus.unpaid:
+        return AppColors.menuBgLavender;
+      case ReimbursementStatus.cancelled:
+        return AppColors.menuBgGray;
       case ReimbursementStatus.rejected:
         return AppColors.menuBgPink;
     }
@@ -45,12 +57,18 @@ class ReimbursementCard extends StatelessWidget {
 
   String _getStatusText() {
     switch (status) {
-      case ReimbursementStatus.waiting:
-        return AppStrings.statusWaiting;
-      case ReimbursementStatus.approved:
-        return AppStrings.statusApproved;
+      case ReimbursementStatus.draft:
+        return AppStrings.reimburseStatusDraft;
+      case ReimbursementStatus.submitted:
+        return AppStrings.reimburseStatusSubmitted;
+      case ReimbursementStatus.cancelled:
+        return AppStrings.reimburseStatusCancelled;
+      case ReimbursementStatus.paid:
+        return AppStrings.reimburseStatusPaid;
+      case ReimbursementStatus.unpaid:
+        return AppStrings.reimburseStatusUnpaid;
       case ReimbursementStatus.rejected:
-        return AppStrings.statusRejected;
+        return AppStrings.reimburseStatusRejected;
     }
   }
 

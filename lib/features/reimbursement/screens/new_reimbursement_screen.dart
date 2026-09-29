@@ -14,6 +14,7 @@ import '../providers/reimbursement_provider.dart';
 import '../repositories/reimbursement_repository.dart';
 import '../widgets/add_reimbursement_detail_bottom_sheet.dart';
 import '../widgets/reimbursement_confirmation_bottom_sheet.dart';
+import '../widgets/new_reimbursement_benefit_item_card.dart';
 
 import '../models/reimbursement_model.dart';
 
@@ -39,10 +40,10 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
             context: context,
             builder: (ctx) => AppPopup(
               svgAsset: 'assets/icons/popup_cancel_icon.svg',
-              title: 'Hapus Rincian Benefit',
-              description: 'Rincian ini akan dihapus dari pengajuan reimburse dan tidak dapat dipulihkan.',
-              primaryButtonText: 'Hapus',
-              secondaryButtonText: AppStrings.cancel,
+              title: AppStrings.deleteDetailConfirmTitle,
+              description: AppStrings.deleteDetailConfirmDesc,
+              primaryButtonText: AppStrings.confirmDelete,
+              secondaryButtonText: AppStrings.batal,
               primaryButtonColor: AppColors.textDanger,
               onPrimaryPressed: () {
                 Navigator.of(ctx).pop(); // close popup
@@ -64,7 +65,7 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
       if (mounted) {
         AppSnackbar.show(
           context,
-          message: 'Rincian berhasil dihapus',
+          message: AppStrings.deleteDetailSuccess,
           type: SnackbarType.success,
         );
       }
@@ -241,7 +242,7 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
                           padding: EdgeInsets.only(bottom: 16),
                           child: Center(child: CircularProgressIndicator()),
                         ),
-                        error: (_, __) => const SizedBox(height: 16),
+                        error: (error, stack) => const SizedBox(height: 16),
                       ),
                       if (_addedItems.isEmpty)
                         Expanded(
@@ -300,7 +301,11 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
                               children: [
                                 ..._addedItems.asMap().entries.map((entry) => Padding(
                                   padding: const EdgeInsets.only(bottom: 16),
-                                  child: _buildDetailCard(entry.value, entry.key),
+                                  child: NewReimbursementBenefitItemCard(
+                                    item: entry.value,
+                                    index: entry.key,
+                                    onEdit: () => _openBottomSheet(initialItem: entry.value, index: entry.key),
+                                  ),
                                 )),
                                 const SizedBox(height: 16),
                                 OutlinedButton.icon(
@@ -392,121 +397,6 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailCard(ReimbursementItemModel item, int index) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.bgWhite,
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: AppColors.borderLight),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: const BoxDecoration(
-              color: AppColors.bgWhite,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(5),
-                topRight: Radius.circular(5),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.name,
-                    style: AppTextStyles.bodySmallBold.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => _openBottomSheet(initialItem: item, index: index),
-                  child: const Icon(Icons.edit, color: AppColors.textSecondary, size: 16),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: AppColors.filterChipBgActive,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(5),
-                bottomRight: Radius.circular(5),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow('Tanggal Transaksi', item.transactionDate),
-                const SizedBox(height: 12),
-                _buildDetailRow('Jumlah yang diajukan', item.amount, isAmount: true),
-                const SizedBox(height: 12),
-                _buildDetailRow('Deskripsi', item.description),
-                const SizedBox(height: 12),
-                _buildAttachmentRow(item.attachmentName),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value, {bool isAmount = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppTextStyles.bodySmall.copyWith(color: AppColors.iconGray),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: (isAmount ? AppTextStyles.bodySmallBold : AppTextStyles.bodySmall).copyWith(
-            color: isAmount ? AppColors.primaryBlueStart : AppColors.textPrimary,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAttachmentRow(String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Lampiran',
-          style: AppTextStyles.bodySmall.copyWith(color: AppColors.iconGray),
-        ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Text(
-                value,
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textPrimary,
-                  decoration: TextDecoration.underline,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 4),
-            const Icon(Icons.open_in_new, size: 12, color: AppColors.textPrimary),
-          ],
-        )
-      ],
     );
   }
 }

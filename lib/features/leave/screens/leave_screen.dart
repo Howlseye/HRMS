@@ -169,7 +169,8 @@ class _LeaveScreenState extends ConsumerState<LeaveScreen> {
                       return CustomRefreshIndicator(
                         onRefresh: () async {
                           ref.invalidate(leaveAllocationProvider);
-                          await ref.refresh(leaveProvider.future);
+                          ref.invalidate(leaveProvider);
+                          await ref.read(leaveProvider.future);
                         },
                         child: LayoutBuilder(
                           builder: (context, constraints) => ListView(
@@ -213,7 +214,8 @@ class _LeaveScreenState extends ConsumerState<LeaveScreen> {
                     return CustomRefreshIndicator(
                       onRefresh: () async {
                         ref.invalidate(leaveAllocationProvider);
-                        await ref.refresh(leaveProvider.future);
+                        ref.invalidate(leaveProvider);
+                        await ref.read(leaveProvider.future);
                       },
                       child: ListView.builder(
                         itemCount: filteredLeaves.length,
