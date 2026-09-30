@@ -6,6 +6,8 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/app_snackbar.dart';
+import 'dart:convert';
 import '../providers/auth_provider.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
@@ -72,11 +74,43 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               CustomButton(
                 text: AppStrings.sendResetEmail,
                 isLoading: isLoading,
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    ref
-                        .read(authControllerProvider)
-                        .sendResetEmail(_emailController.text);
+                    try {
+                      final rawMsg = await ref
+                          .read(authControllerProvider)
+                          .sendResetEmail(_emailController.text);
+
+                      String msg = AppStrings.resetEmailSent;
+                      if (rawMsg != null) {
+                        try {
+                          final List<dynamic> msgList = jsonDecode(rawMsg);
+                          if (msgList.isNotEmpty) {
+                            final Map<String, dynamic> msgMap = jsonDecode(msgList.first);
+                            if (msgMap.containsKey('message')) {
+                              msg = msgMap['message'];
+                            }
+                          }
+                        } catch (_) {}
+                      }
+
+                      if (context.mounted) {
+                        AppSnackbar.show(
+                          context,
+                          message: msg,
+                          type: SnackbarType.success,
+                        );
+                        context.pop();
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        AppSnackbar.show(
+                          context,
+                          message: AppStrings.resetEmailFailed,
+                          type: SnackbarType.error,
+                        );
+                      }
+                    }
                   }
                 },
               ),

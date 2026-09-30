@@ -4,7 +4,8 @@ class ApiEndpoints {
   // Auth
   static const String login = 'method/login';
   static const String logout = 'method/logout';
-
+  static const String resetPassword = 'method/frappe.core.doctype.user.user.reset_password';
+  
   // Common
   static const String uploadFile = 'method/upload_file';
 

@@ -47,10 +47,16 @@ class AuthController {
     }
   }
 
-  Future<void> sendResetEmail(String email) async {
+  Future<String?> sendResetEmail(String email) async {
     _ref.read(resetPasswordLoadingProvider.notifier).setLoading(true);
-    await Future.delayed(const Duration(seconds: 2));
-    _ref.read(resetPasswordLoadingProvider.notifier).setLoading(false);
+    try {
+      final repository = _ref.read(authRepositoryProvider);
+      return await repository.sendResetEmail(email);
+    } catch (e) {
+      rethrow;
+    } finally {
+      _ref.read(resetPasswordLoadingProvider.notifier).setLoading(false);
+    }
   }
 
   Future<void> logout() async {

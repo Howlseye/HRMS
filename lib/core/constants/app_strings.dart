@@ -22,6 +22,8 @@ class AppStrings {
   static const String spamNotice =
       'Cek kotak spam jika Anda tidak menerima email untuk reset password di kotak masuk.';
   static const String backToLogin = 'Kembali ke halaman login';
+  static const String resetEmailSent = 'Instruksi reset password telah dikirim ke email Anda.';
+  static const String resetEmailFailed = 'Gagal mengirim email reset password.';
 
   // Home Screen
   static const String goodMorning = 'Selamat pagi,';

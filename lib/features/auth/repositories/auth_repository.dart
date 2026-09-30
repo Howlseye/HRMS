@@ -61,6 +61,18 @@ class AuthRepository {
     }
   }
 
+  Future<String?> sendResetEmail(String email) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.resetPassword,
+        data: {'user': email},
+      );
+      return response.data['_server_messages'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     try {
       final keysToRemove = [
