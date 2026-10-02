@@ -8,6 +8,7 @@ import '../../../core/widgets/custom_app_bar.dart';
 import '../models/attendance_log_entry.dart';
 import '../providers/attendance_log_provider.dart';
 import '../widgets/attendance_detail_field.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 
 class AttendanceDetailScreen extends ConsumerWidget {
   final AttendanceLogEntry logEntry;
@@ -101,7 +102,7 @@ class AttendanceDetailScreen extends ConsumerWidget {
                   },
                   loading: () => const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24.0),
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child: CustomLoadingIndicator()),
                   ),
                   error: (error, stack) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24.0),

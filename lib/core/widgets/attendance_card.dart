@@ -6,6 +6,7 @@ import '../constants/app_strings.dart';
 import '../theme/app_text_styles.dart';
 import '../../features/attendance/providers/current_shift_provider.dart';
 import '../../features/attendance/providers/presence_provider.dart';
+import 'custom_loading_indicator.dart';
 import '../../features/employee/providers/current_employee_provider.dart';
 import '../../features/home/providers/home_provider.dart';
 import '../../features/attendance/widgets/presence_note_bottom_sheet.dart';
@@ -135,15 +136,23 @@ class AttendanceCard extends ConsumerWidget {
       ),
       child: shiftAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.textWhite),
+          child: CustomLoadingIndicator(),
         ),
         error: (err, stack) => Center(
           child: Text(
-            AppStrings.errorDataNotFound,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textWhite),
+            AppStrings.noShiftData,
+            style: AppTextStyles.bodyMediumBold.copyWith(color: AppColors.textWhite),
           ),
         ),
         data: (shift) {
+          if (shift == null) {
+            return Center(
+              child: Text(
+                AppStrings.noShiftData,
+                style: AppTextStyles.bodyMediumBold.copyWith(color: AppColors.textWhite),
+              ),
+            );
+          }
           final startTime = _formatTime(shift.startTime);
           final endTime = _formatTime(shift.endTime);
           

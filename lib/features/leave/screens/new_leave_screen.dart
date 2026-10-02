@@ -14,6 +14,7 @@ import '../../../core/widgets/custom_dropdown_field.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/custom_date_picker_field.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../repositories/leave_repository.dart';
 
 class NewLeaveScreen extends ConsumerStatefulWidget {
@@ -124,7 +125,7 @@ class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
                       onChanged: (value) {
                         setState(() {
                           _selectedLeaveType = value;
-                          _endDate = null; // Reset end date when leave type changes
+                          _endDate = null;
                         });
                       },
                     ),
@@ -141,7 +142,7 @@ class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
                       onChanged: (date) {
                         setState(() {
                           _startDate = date;
-                          _endDate = null; // Reset end date when start date changes
+                          _endDate = null;
                         });
                       },
                     ),
@@ -299,17 +300,16 @@ class _NewLeaveScreenState extends ConsumerState<NewLeaveScreen> {
                               if (context.mounted) {
                                 ref.invalidate(leaveProvider);
                                 ref.invalidate(leaveAllocationProvider);
-                                context.pop(); // Close bottom sheet
+                                context.pop();
                                 context.pushReplacement('/leave/success');
                               }
                             } catch (e) {
                               if (context.mounted) {
                                 setModalState(() => isSubmitting = false);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(e.toString().replaceAll('Exception: ', '')),
-                                    backgroundColor: AppColors.textDanger,
-                                  ),
+                                AppSnackbar.show(
+                                  context,
+                                  message: e.toString().replaceAll('Exception: ', ''),
+                                  type: SnackbarType.error,
                                 );
                               }
                             }

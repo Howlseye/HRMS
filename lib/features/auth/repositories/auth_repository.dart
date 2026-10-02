@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/shared_prefs_provider.dart';
+import '../../../core/constants/app_strings.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final dio = ref.watch(dioProvider);
@@ -56,8 +57,18 @@ class AuthRepository {
       }
 
       return sessionData;
+    } on DioException catch (e) {
+      if (e.error != null) {
+        throw Exception(e.error.toString());
+      } else {
+        throw Exception(AppStrings.errorServerSide);
+      }
     } catch (e) {
-      rethrow;
+      if (e is DioException && e.error != null) {
+        throw Exception(e.error.toString());
+      } else {
+        throw Exception(AppStrings.errorServerSide);
+      }
     }
   }
 
@@ -68,8 +79,18 @@ class AuthRepository {
         data: {'user': email},
       );
       return response.data['_server_messages'];
+    } on DioException catch (e) {
+      if (e.error != null) {
+        throw Exception(e.error.toString());
+      } else {
+        throw Exception(AppStrings.errorServerSide);
+      }
     } catch (e) {
-      rethrow;
+      if (e is DioException && e.error != null) {
+        throw Exception(e.error.toString());
+      } else {
+        throw Exception(AppStrings.errorServerSide);
+      }
     }
   }
 

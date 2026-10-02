@@ -8,6 +8,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/app_popup.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../employee/providers/current_employee_provider.dart';
 import '../providers/reimbursement_provider.dart';
@@ -46,11 +47,11 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
               secondaryButtonText: AppStrings.batal,
               primaryButtonColor: AppColors.textDanger,
               onPrimaryPressed: () {
-                Navigator.of(ctx).pop(); // close popup
-                Navigator.of(context).pop('DELETED'); // close bottom sheet
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop('DELETED');
               },
               onSecondaryPressed: () {
-                Navigator.of(ctx).pop(); // close popup
+                Navigator.of(ctx).pop();
               },
             ),
           );
@@ -115,7 +116,7 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
               Navigator.of(context).pop();
               AppSnackbar.show(
                 context,
-                message: e.toString(),
+                message: e.toString().replaceAll('Exception: ', ''),
                 type: SnackbarType.error,
               );
             }
@@ -240,7 +241,7 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
                         ),
                         loading: () => const Padding(
                           padding: EdgeInsets.only(bottom: 16),
-                          child: Center(child: CircularProgressIndicator()),
+                          child: Center(child: CustomLoadingIndicator()),
                         ),
                         error: (error, stack) => const SizedBox(height: 16),
                       ),

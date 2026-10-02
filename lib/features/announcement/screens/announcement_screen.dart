@@ -6,6 +6,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../providers/announcement_provider.dart';
 import '../widgets/announcement_card.dart';
+import '../../../core/widgets/empty_data_widget.dart';
 
 class AnnouncementScreen extends ConsumerWidget {
   const AnnouncementScreen({super.key});
@@ -20,8 +21,9 @@ class AnnouncementScreen extends ConsumerWidget {
         title: AppStrings.announcement,
       ),
       body: announcements.isEmpty
-          ? const Center(
-              child: Text(AppStrings.noAnnouncement),
+          ? const EmptyDataWidget(
+              title: AppStrings.noAnnouncement,
+              description: AppStrings.noAnnouncementSub,
             )
           : ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),

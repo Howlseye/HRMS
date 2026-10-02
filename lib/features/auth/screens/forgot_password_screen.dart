@@ -106,7 +106,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                       if (context.mounted) {
                         AppSnackbar.show(
                           context,
-                          message: AppStrings.resetEmailFailed,
+                          message: e.toString().replaceAll('Exception: ', ''),
                           type: SnackbarType.error,
                         );
                       }

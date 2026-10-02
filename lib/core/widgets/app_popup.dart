@@ -77,25 +77,27 @@ class AppPopup extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onSecondaryPressed,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.borderLight),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                if (secondaryButtonText.isNotEmpty) ...[
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: onSecondaryPressed,
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.borderLight),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      secondaryButtonText,
-                      style: AppTextStyles.title.copyWith(
-                        color: AppColors.textPrimary,
+                      child: Text(
+                        secondaryButtonText,
+                        style: AppTextStyles.title.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
+                  const SizedBox(width: 12),
+                ],
                 Expanded(
                   child: ElevatedButton(
                     onPressed: onPrimaryPressed,

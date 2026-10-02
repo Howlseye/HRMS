@@ -13,10 +13,13 @@ import '../../../core/widgets/custom_dropdown_field.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/custom_date_picker_field.dart';
 import '../../../core/widgets/app_popup.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/utils/currency_input_formatter.dart';
 import 'package:intl/intl.dart';
 import '../models/reimbursement_model.dart';
 import '../providers/reimbursement_provider.dart';
+
+import '../providers/draft_detail_provider.dart';
 
 class AddReimbursementDetailBottomSheet extends ConsumerStatefulWidget {
   final ReimbursementItemModel? initialItem;
@@ -49,9 +52,20 @@ class _AddReimbursementDetailBottomSheetState extends ConsumerState<AddReimburse
       _amountController.text = widget.initialItem!.amount.replaceAll(RegExp(r'[^0-9]'), '');
       _descriptionController.text = widget.initialItem!.description;
       _existingAttachmentName = widget.initialItem!.attachmentName;
+    } else {
+      final draft = ref.read(draftDetailProvider);
+      _selectedBenefit = draft.selectedBenefit;
+      _transactionDate = draft.transactionDate;
+      _attachment = draft.attachment;
+      _existingAttachmentName = draft.existingAttachmentName;
+      _amountController.text = draft.amount;
+      _descriptionController.text = draft.description;
     }
     _amountController.addListener(_updateSaveButtonState);
     _descriptionController.addListener(_updateSaveButtonState);
+    
+
+    _updateSaveButtonState();
   }
 
   @override
@@ -69,6 +83,16 @@ class _AddReimbursementDetailBottomSheetState extends ConsumerState<AddReimburse
           _descriptionController.text.isNotEmpty &&
           (_attachment != null || _existingAttachmentName != null);
     });
+
+    if (widget.initialItem == null) {
+      final draft = ref.read(draftDetailProvider);
+      draft.selectedBenefit = _selectedBenefit;
+      draft.transactionDate = _transactionDate;
+      draft.attachment = _attachment;
+      draft.existingAttachmentName = _existingAttachmentName;
+      draft.amount = _amountController.text;
+      draft.description = _descriptionController.text;
+    }
   }
 
   Future<void> _showAttachmentSourceDialog() async {
@@ -186,11 +210,10 @@ class _AddReimbursementDetailBottomSheetState extends ConsumerState<AddReimburse
       final int fileSize = await pickedFile.length();
       if (fileSize > 5 * 1024 * 1024) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.maxFileSize),
-              backgroundColor: AppColors.textDanger,
-            ),
+          AppSnackbar.show(
+            context,
+            message: AppStrings.maxFileSize,
+            type: SnackbarType.error,
           );
         }
         return;
@@ -232,8 +255,8 @@ class _AddReimbursementDetailBottomSheetState extends ConsumerState<AddReimburse
                   ),
                 );
               },
-              loading: () => const Padding(
-                padding: EdgeInsets.all(48.0),
+              loading: () => const SizedBox(
+                height: 200,
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (err, stack) => Padding(
@@ -529,6 +552,11 @@ class _AddReimbursementDetailBottomSheetState extends ConsumerState<AddReimburse
                         : _existingAttachmentName ?? '',
                     attachmentPath: _attachment?.path,
                   );
+                  
+                  if (widget.initialItem == null) {
+                    ref.read(draftDetailProvider).clear();
+                  }
+                  
                   Navigator.pop(context, item);
                 } : null,
                 child: Container(

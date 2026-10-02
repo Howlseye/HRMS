@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 import '../../employee/providers/current_employee_provider.dart';
 import '../models/reimbursement_model.dart';
 
@@ -83,7 +84,7 @@ class ReimbursementSummaryCard extends ConsumerWidget {
             ),
             loading: () => const Padding(
               padding: EdgeInsets.only(bottom: 20),
-              child: Center(child: CircularProgressIndicator()),
+              child: Center(child: CustomLoadingIndicator()),
             ),
             error: (error, stackTrace) => const SizedBox(height: 20),
           ),

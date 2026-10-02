@@ -11,7 +11,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       return newValue.copyWith(text: '');
     }
     
-    // Remove all non-digit characters
+
     String cleanText = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
     
     if (cleanText.isEmpty) {

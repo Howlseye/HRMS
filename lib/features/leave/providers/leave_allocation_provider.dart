@@ -4,7 +4,7 @@ import '../../employee/providers/current_employee_provider.dart';
 import '../models/leave_allocation_model.dart';
 import '../repositories/leave_repository.dart';
 
-final leaveAllocationProvider = FutureProvider<LeaveDetailsResponse>((ref) async {
+final leaveAllocationProvider = FutureProvider.autoDispose<LeaveDetailsResponse>((ref) async {
   final employee = await ref.watch(currentEmployeeProvider.future);
   final repository = ref.watch(leaveRepositoryProvider);
   

@@ -31,8 +31,7 @@ class ReimbursementRepository {
       if (data == null) return [];
 
       return data.map((json) => BenefitTypeModel.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 
@@ -74,8 +73,7 @@ class ReimbursementRepository {
       }
 
       return reimbursements;
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
   Future<void> cancelReimbursement(String id) async {
@@ -83,8 +81,7 @@ class ReimbursementRepository {
       await _dio.delete(
         ApiEndpoints.getReimbursementsDetail.replaceAll('{id}', id),
       );
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
   Future<void> submitReimbursement(List<ReimbursementItemModel> items, EmployeeModel employee) async {
@@ -153,8 +150,7 @@ class ReimbursementRepository {
           'base_total_claimed_amount': totalAmount,
         },
       );
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 

@@ -8,7 +8,7 @@ final benefitTypeProvider = FutureProvider<List<String>>((ref) async {
   return benefits.map((b) => b.name).toList();
 });
 
-final reimbursementProvider = FutureProvider<List<ReimbursementModel>>((ref) async {
+final reimbursementProvider = FutureProvider.autoDispose<List<ReimbursementModel>>((ref) async {
   final repository = ref.watch(reimbursementRepositoryProvider);
   return await repository.getReimbursements();
 });

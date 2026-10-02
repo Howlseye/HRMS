@@ -46,7 +46,7 @@ class ReimbursementCancelButton extends ConsumerWidget {
                   if (context.mounted) {
                     AppSnackbar.show(
                       context,
-                      message: e.toString(),
+                      message: e.toString().replaceAll('Exception: ', ''),
                       type: SnackbarType.error,
                     );
                   }

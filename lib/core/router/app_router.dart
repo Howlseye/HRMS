@@ -15,6 +15,7 @@ import '../../features/leave/screens/leave_screen.dart';
 import '../../features/leave/screens/leave_detail_screen.dart';
 import '../../features/leave/screens/new_leave_screen.dart';
 import '../../features/leave/screens/success_leave_screen.dart';
+import '../../features/leave/models/leave_detail_args_model.dart';
 import '../../features/reimbursement/screens/reimbursement_screen.dart';
 import '../../features/reimbursement/screens/reimbursement_detail_screen.dart';
 import '../../features/reimbursement/screens/new_reimbursement_screen.dart';

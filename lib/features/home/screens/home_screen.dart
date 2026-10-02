@@ -17,6 +17,8 @@ import '../../announcement/providers/announcement_provider.dart';
 import '../../announcement/widgets/announcement_card.dart';
 import '../../employee/providers/current_employee_provider.dart';
 import '../../attendance/providers/current_shift_provider.dart';
+import '../../../core/widgets/app_error_widget.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -26,6 +28,7 @@ class HomeScreen extends ConsumerWidget {
     final activitiesAsync = ref.watch(activityProvider);
     final announcements = ref.watch(announcementProvider);
     final currentEmployeeAsync = ref.watch(currentEmployeeProvider);
+    final _ = ref.watch(currentShiftProvider);
 
     return Scaffold(
       backgroundColor: AppColors.bgLight,
@@ -38,19 +41,13 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           error: (error, stack) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  AppStrings.errorServerSide,
-                  style: AppTextStyles.headingSmall.copyWith(color: AppColors.textDanger),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  AppStrings.errorDataNotFound,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                ),
-              ],
+            child: AppErrorWidget(
+              errorMessage: error.toString().replaceAll('Exception: ', ''),
+              onRetry: () {
+                ref.invalidate(currentEmployeeProvider);
+                ref.invalidate(currentShiftProvider);
+                ref.invalidate(activityProvider);
+              },
             ),
           ),
           data: (employee) => CustomRefreshIndicator(
@@ -117,15 +114,17 @@ class HomeScreen extends ConsumerWidget {
                     loading: () => [
                       const Padding(
                         padding: EdgeInsets.all(24.0),
-                        child: Center(child: CircularProgressIndicator(color: AppColors.primaryBlueStart)),
+                        child: CustomLoadingIndicator(),
                       ),
                     ],
                     error: (err, stack) => [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                        child: Text(
-                          AppStrings.errorServerSide,
-                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDanger),
+                        child: AppErrorWidget(
+                          errorMessage: err.toString().replaceAll('Exception: ', ''),
+                          onRetry: () {
+                            ref.invalidate(activityProvider);
+                          },
                         ),
                       )
                     ],

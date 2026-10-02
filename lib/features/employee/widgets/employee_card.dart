@@ -64,7 +64,7 @@ class EmployeeCard extends StatelessWidget {
               colorFilter: const ColorFilter.mode(AppColors.iconDisabled, BlendMode.srcIn),
             ),
             onPressed: () {
-              // Handle WhatsApp action
+
             },
           ),
         ],

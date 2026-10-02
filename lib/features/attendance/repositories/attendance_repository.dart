@@ -39,10 +39,8 @@ class AttendanceRepository {
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw Exception(AppStrings.errorServerSide);
       }
-    } on DioException catch (_) {
-      throw Exception(AppStrings.errorServerSide);
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } on DioException catch (e) { if (e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 
@@ -56,10 +54,8 @@ class AttendanceRepository {
       }
 
       return listData.map((json) => ActivityModel.fromJson(json)).toList();
-    } on DioException catch (_) {
-      throw Exception(AppStrings.errorServerSide);
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } on DioException catch (e) { if (e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 
@@ -86,10 +82,8 @@ class AttendanceRepository {
       }
       
       return List<Map<String, dynamic>>.from(listData);
-    } on DioException catch (_) {
-      throw Exception(AppStrings.errorServerSide);
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } on DioException catch (e) { if (e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 
@@ -110,10 +104,8 @@ class AttendanceRepository {
       }
       
       return List<Map<String, dynamic>>.from(listData);
-    } on DioException catch (_) {
-      throw Exception(AppStrings.errorServerSide);
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } on DioException catch (e) { if (e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 }

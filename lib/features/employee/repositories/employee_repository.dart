@@ -44,8 +44,7 @@ class EmployeeRepository {
         detailData,
         avatarAsset: avatarAsset,
       );
-    } on DioException catch (_) {
-      throw Exception(AppStrings.errorServerSide);
+    } on DioException catch (e) { if (e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     } catch (e) {
       if (e.toString().contains(AppStrings.errorDataNotFound)) {
         rethrow;

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_popup.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_refresh_indicator.dart';
@@ -12,26 +13,9 @@ import '../widgets/leave_card.dart';
 import '../repositories/leave_repository.dart';
 import '../providers/leave_provider.dart';
 import '../../employee/providers/current_employee_provider.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 
-class LeaveDetailArgs {
-  final String title;
-  final LeaveStatus status;
-  final String submissionDate;
-  final String leaveType;
-  final String startDate;
-  final String reason;
-  final String? rejectReason;
-
-  LeaveDetailArgs({
-    required this.title,
-    required this.status,
-    required this.submissionDate,
-    required this.leaveType,
-    required this.startDate,
-    required this.reason,
-    this.rejectReason,
-  });
-}
+import '../models/leave_detail_args_model.dart';
 
 class LeaveDetailScreen extends ConsumerWidget {
   final LeaveDetailArgs args;
@@ -141,7 +125,7 @@ class LeaveDetailScreen extends ConsumerWidget {
                                   loading: () => const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 12),
                                     child: Center(
-                                      child: CircularProgressIndicator(),
+                                      child: CustomLoadingIndicator(),
                                     ),
                                   ),
                                   error: (error, stack) => const SizedBox(height: 24),
@@ -210,27 +194,27 @@ class LeaveDetailScreen extends ConsumerWidget {
                                   secondaryButtonText: AppStrings.popupCancel,
                                   primaryButtonColor: AppColors.textDanger,
                                   onPrimaryPressed: () async {
-                                    Navigator.pop(context); // close popup
+                                    Navigator.pop(context);
                                     try {
                                       await ref
                                           .read(leaveRepositoryProvider)
                                           .cancelLeave(args.title);
                                       ref.invalidate(leaveProvider);
                                       if (context.mounted) {
-                                        context.pop(); // close detail screen
+                                        context.pop();
                                       }
                                     } catch (e) {
                                       if (context.mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(content: Text(e.toString())),
-                                        );
+                                      AppSnackbar.show(
+                                        context,
+                                        message: e.toString().replaceAll('Exception: ', ''),
+                                        type: SnackbarType.error,
+                                      );
                                       }
                                     }
                                   },
                                   onSecondaryPressed: () {
-                                    Navigator.pop(context); // close popup
+                                    Navigator.pop(context);
                                   },
                                 ),
                               );

@@ -115,8 +115,8 @@ class ReimbursementConfirmationBottomSheet extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // Close bottom sheet
-                  onConfirm(); // Trigger action
+                  Navigator.pop(context);
+                  onConfirm();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryBlueStart,

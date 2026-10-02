@@ -20,7 +20,7 @@ final attendanceFilterDateProvider = NotifierProvider<AttendanceFilterDateNotifi
   return AttendanceFilterDateNotifier();
 });
 
-final attendanceLogProvider = FutureProvider<List<AttendanceLogEntry>>((ref) async {
+final attendanceLogProvider = FutureProvider.autoDispose<List<AttendanceLogEntry>>((ref) async {
   final filterDate = ref.watch(attendanceFilterDateProvider);
   final attendanceRepo = ref.watch(attendanceRepositoryProvider);
   final shiftRepo = ref.watch(shiftRepositoryProvider);

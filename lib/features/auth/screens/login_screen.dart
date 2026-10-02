@@ -140,7 +140,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       if (context.mounted) {
                         AppSnackbar.show(
                           context,
-                          message: AppStrings.loginFailed,
+                          message: e.toString().replaceAll('Exception: ', ''),
                           type: SnackbarType.error,
                         );
                       }

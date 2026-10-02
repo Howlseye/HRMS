@@ -26,10 +26,8 @@ class LeaveRepository {
       }
 
       return listData.map((json) => LeaveModel.fromJson(json)).toList();
-    } on DioException catch (_) {
-      throw Exception(AppStrings.errorServerSide);
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } on DioException catch (e) { if (e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 
@@ -38,8 +36,7 @@ class LeaveRepository {
       await _dio.delete(
         ApiEndpoints.getLeaveDetail.replaceAll('{id}', name),
       );
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 
@@ -60,14 +57,15 @@ class LeaveRepository {
             allocationResult[key] = LeaveAllocationDetail.fromJson(value);
           });
         }
+
+        
         return LeaveDetailsResponse(
           leaveAllocation: allocationResult,
           leaveApprover: message['leave_approver'] as String?,
         );
       }
-      return LeaveDetailsResponse(leaveAllocation: {});
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+      throw Exception('NO_LEAVE_ALLOCATION');
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 
@@ -90,8 +88,7 @@ class LeaveRepository {
           "leave_approver": leaveApprover,
         },
       );
-    } catch (e) {
-      throw Exception(AppStrings.errorServerSide);
+    } catch (e) { if (e is DioException && e.error != null) { throw Exception(e.error.toString()); } else { throw Exception(AppStrings.errorServerSide); }
     }
   }
 }

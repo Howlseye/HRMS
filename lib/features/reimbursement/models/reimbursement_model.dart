@@ -84,10 +84,10 @@ class ReimbursementModel {
   static ReimbursementStatus _parseStatus(String? status) {
     switch (status?.toLowerCase()) {
       case 'draft':
-      case 'pending': // fallback
+      case 'pending':
         return ReimbursementStatus.draft;
       case 'submitted':
-      case 'approved': // fallback
+      case 'approved':
         return ReimbursementStatus.submitted;
       case 'cancelled':
         return ReimbursementStatus.cancelled;

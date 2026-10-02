@@ -9,6 +9,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/shared_prefs_provider.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 import '../../auth/providers/auth_session_provider.dart';
 import '../models/reimbursement_model.dart';
 import '../repositories/reimbursement_repository.dart';
@@ -158,7 +159,7 @@ class ReimbursementBenefitDetailCard extends ConsumerWidget {
           httpHeaders: cookie != null ? {'Cookie': cookie} : null,
           placeholder: (context, url) => const Padding(
             padding: EdgeInsets.all(32.0),
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(child: CustomLoadingIndicator()),
           ),
           errorWidget: (context, url, error) => const Padding(
             padding: EdgeInsets.all(32.0),
@@ -242,7 +243,7 @@ class ReimbursementBenefitDetailCard extends ConsumerWidget {
                                       child: CachedNetworkImage(
                                         imageUrl: imageUrl,
                                         httpHeaders: cookie != null ? {'Cookie': cookie} : null,
-                                        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                        placeholder: (context, url) => const Center(child: CustomLoadingIndicator()),
                                         errorWidget: (context, url, error) => const Icon(Icons.error, color: AppColors.textDanger),
                                         fit: BoxFit.contain,
                                       ),
@@ -266,7 +267,7 @@ class ReimbursementBenefitDetailCard extends ConsumerWidget {
                                   : CachedNetworkImage(
                                       imageUrl: imageUrl,
                                       httpHeaders: cookie != null ? {'Cookie': cookie} : null,
-                                      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                      placeholder: (context, url) => const Center(child: CustomLoadingIndicator()),
                                       errorWidget: (context, url, error) => const Icon(Icons.error, color: AppColors.textDanger),
                                       fit: BoxFit.cover,
                                     ),
@@ -311,7 +312,7 @@ class ReimbursementBenefitDetailCard extends ConsumerWidget {
                           if (context.mounted) {
                             AppSnackbar.show(
                               context,
-                              message: '${AppStrings.downloadFailed}: $e',
+                              message: '${AppStrings.downloadFailed}: ${e.toString().replaceAll('Exception: ', '')}',
                               type: SnackbarType.error,
                             );
                           }

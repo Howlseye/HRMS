@@ -11,10 +11,14 @@ import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../../../core/widgets/month_year_filter_bar.dart';
 import '../widgets/leave_card.dart';
-import 'leave_detail_screen.dart';
+
+import '../models/leave_detail_args_model.dart';
 import '../providers/leave_provider.dart';
 import '../providers/leave_allocation_provider.dart';
 import '../../../core/widgets/status_filter_bottom_sheet.dart';
+import '../../../core/widgets/app_error_widget.dart';
+import '../../../core/widgets/app_popup.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 
 class LeaveScreen extends ConsumerStatefulWidget {
   const LeaveScreen({super.key});
@@ -62,6 +66,46 @@ class _LeaveScreenState extends ConsumerState<LeaveScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue>(
+      leaveAllocationProvider,
+      (_, state) {
+        if (!state.isLoading && state.hasValue) {
+          final data = state.value;
+          if (data != null) {
+            String? title;
+            String? desc;
+            
+            if (data.leaveAllocation.isEmpty) {
+              title = AppStrings.noLeaveAllocationTitle;
+              desc = AppStrings.noLeaveAllocationDesc;
+            } else if (data.leaveApprover == null || data.leaveApprover!.isEmpty) {
+              title = AppStrings.noLeaveApproverTitle;
+              desc = AppStrings.noLeaveApproverDesc;
+            }
+
+            if (title != null && desc != null) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => AppPopup(
+                  svgAsset: 'assets/icons/popup_cancel_icon.svg',
+                  title: title!,
+                  description: desc!,
+                  primaryButtonText: AppStrings.backToHome,
+                  secondaryButtonText: '',
+                  onPrimaryPressed: () {
+                    context.pop();
+                    context.go('/main');
+                  },
+                  onSecondaryPressed: () {},
+                ),
+              );
+            }
+          }
+        }
+      },
+    );
+
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       appBar: CustomAppBar(
@@ -118,7 +162,7 @@ class _LeaveScreenState extends ConsumerState<LeaveScreen> {
                       loading: () => const SizedBox(
                         width: 24,
                         height: 24,
-                        child: CircularProgressIndicator(color: AppColors.bgWhite, strokeWidth: 2),
+                        child: CustomLoadingIndicator(width: 24, height: 24),
                       ),
                       error: (err, stack) => Text(
                         AppStrings.none,
@@ -271,13 +315,14 @@ class _LeaveScreenState extends ConsumerState<LeaveScreen> {
                     );
                   },
                   loading: () => const Center(
-                    child: CircularProgressIndicator(color: AppColors.primaryBlueStart),
+                    child: CustomLoadingIndicator(),
                   ),
-                  error: (error, stack) => Center(
-                    child: Text(
-                      AppStrings.errorLoadData,
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDanger),
-                    ),
+                  error: (error, stack) => AppErrorWidget(
+                    errorMessage: error.toString().replaceAll('Exception: ', ''),
+                    onRetry: () {
+                      ref.invalidate(leaveAllocationProvider);
+                      ref.invalidate(leaveProvider);
+                    },
                   ),
                 ),
               ),

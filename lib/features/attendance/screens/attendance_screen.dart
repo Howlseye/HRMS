@@ -9,6 +9,8 @@ import '../../../core/widgets/attendance_activity_card.dart';
 import '../../../core/widgets/attendance_card.dart';
 import '../../../core/widgets/custom_refresh_indicator.dart';
 import '../providers/attendance_provider.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
+import '../../../core/widgets/empty_data_widget.dart';
 
 class AttendanceScreen extends ConsumerWidget {
   const AttendanceScreen({super.key});
@@ -88,40 +90,43 @@ class AttendanceScreen extends ConsumerWidget {
                         await Future.delayed(const Duration(seconds: 1));
                       },
                       child: historyAsync.when(
-                        data: (history) => SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(
-                              left: 24.0, right: 24.0, bottom: 24.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (history.isEmpty)
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                                    child: Text(
-                                      AppStrings.emptyActivity,
-                                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.iconDisabled),
+                        data: (history) => LayoutBuilder(
+                          builder: (context, constraints) => SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(
+                                left: 24.0, right: 24.0, bottom: 24.0),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight - 24.0,
+                              ),
+                              child: history.isEmpty
+                                  ? const Center(
+                                      child: EmptyDataWidget(
+                                        title: AppStrings.emptyActivity,
+                                        description: AppStrings.emptyActivityDesc,
+                                      ),
+                                    )
+                                  : Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ...history.map((activity) => AttendanceActivityCard(
+                                          icon: activity.icon,
+                                          title: activity.title,
+                                          date: activity.date,
+                                          time: activity.time,
+                                          iconColor: activity.iconColor,
+                                          iconBgColor: activity.iconBgColor,
+                                          isTimeWarning: activity.isTimeWarning,
+                                          margin: const EdgeInsets.only(bottom: 12.0),
+                                        )),
+                                        const SizedBox(height: 32),
+                                      ],
                                     ),
-                                  ),
-                                )
-                              else
-                                ...history.map((activity) => AttendanceActivityCard(
-                                  icon: activity.icon,
-                                  title: activity.title,
-                                  date: activity.date,
-                                  time: activity.time,
-                                  iconColor: activity.iconColor,
-                                  iconBgColor: activity.iconBgColor,
-                                  isTimeWarning: activity.isTimeWarning,
-                                  margin: const EdgeInsets.only(bottom: 12.0),
-                                )),
-                              const SizedBox(height: 32),
-                            ],
+                            ),
                           ),
                         ),
                         loading: () => const Center(
-                          child: CircularProgressIndicator(color: AppColors.primaryBlueStart),
+                          child: CustomLoadingIndicator(),
                         ),
                         error: (error, stack) => Center(
                           child: Text(

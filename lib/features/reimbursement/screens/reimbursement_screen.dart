@@ -14,6 +14,8 @@ import '../providers/reimbursement_provider.dart';
 import '../widgets/reimbursement_card.dart';
 import '../../../core/widgets/status_filter_bottom_sheet.dart';
 import '../models/reimbursement_model.dart';
+import '../../../core/widgets/app_error_widget.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 
 class ReimbursementScreen extends ConsumerStatefulWidget {
   const ReimbursementScreen({super.key});
@@ -164,10 +166,13 @@ class _ReimbursementScreenState extends ConsumerState<ReimbursementScreen> {
                       );
                   },
                   loading: () => const Center(
-                      child: CircularProgressIndicator(),
+                      child: CustomLoadingIndicator(),
                     ),
-                    error: (error, stackTrace) => Center(
-                      child: Text(error.toString()),
+                    error: (error, stackTrace) => AppErrorWidget(
+                      errorMessage: error.toString().replaceAll('Exception: ', ''),
+                      onRetry: () {
+                        ref.invalidate(reimbursementProvider);
+                      },
                     ),
                   ),
             ),

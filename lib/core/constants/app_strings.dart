@@ -54,7 +54,8 @@ class AppStrings {
   static const String attendanceList = 'Daftar Kehadiran';
   static String totalDays(int count) => '$count hari';
   static const String errorLoadData = 'Gagal memuat data';
-  static const String noAttendanceHistory = 'Tidak ada riwayat absensi';
+  static const String noAttendanceHistory = 'Tidak ada riwayat kehadiran';
+  static const String noAttendanceHistoryDesc = 'Belum ada riwayat kehadiran yang\ntercatat untuk periode ini.';
   static const String noReason = 'Tidak mencantumkan alasan';
 
   // Detail Attendance Screen
@@ -77,12 +78,13 @@ class AppStrings {
   static const String notEarlyOut = 'Tidak pulang awal';
   
   static const String todaysActivity = 'Aktivitas Hari Ini';
-  static const String emptyActivity = 'Tidak ada aktivitas hari ini';
+  static const String emptyActivity = 'Tidak ada riwayat absensi';
+  static const String emptyActivityDesc = 'Belum ada absensi yang tercatat.';
   static const String viewAll = 'Lihat Semua';
   static const String announcement = 'Pengumuman';
   static const String detailPengumuman = 'Detail Pengumuman';
   static const String noAnnouncement = 'Belum ada pengumuman';
-  static const String noAnnouncementSub = 'Tidak ada pengumuman yang tersedia untuk saat ini.';
+  static const String noAnnouncementSub = 'Tidak ada pengumuman\nyang tersedia untuk saat ini.';
   // Attendance Success Screen
   static const String checkInSent = 'Check In Dikirim';
   static const String checkOutSent = 'Check Out Dikirim';
@@ -141,8 +143,15 @@ class AppStrings {
   static const String popupCancelLeaveConfirm = 'Batalkan';
 
   // Error Messages
-  static const String errorServerSide = 'Server Side Error';
+  static const String errorServerSide = 'Terjadi kesalahan pada server. Coba beberapa saat lagi.';
+  static const String errorConnection = 'Koneksi Bermasalah';
+  static const String errorSessionExpired = 'Sesi Anda telah habis atau akses ditolak.';
+  static const String errorInternalServer = 'Server bermasalah.';
+  static const String errorEmailNotFound = 'Email tidak ditemukan.';
+  static const String errorSystem = 'Terjadi kesalahan pada sistem.';
+  static const String cobaLagi = 'Coba Lagi';
   static const String errorDataNotFound = 'Data Not Found';
+  static const String noShiftData = 'Jadwal belum tersedia';
   static const String employeeDataNotLoaded = 'Data karyawan belum dimuat. Silakan muat ulang halaman.';
   static String requiredField(String field) => '$field wajib diisi';
 
@@ -169,6 +178,11 @@ class AppStrings {
   static const String remainingYearlyLeave = 'Sisa Cuti Tahunan';
   static const String noLeaveRequest = 'Belum ada pengajuan';
   static const String noLeaveRequestSub = 'Anda dapat mengajukan melalui\ntombol di bawah ini';
+  static const String noLeaveAllocationTitle = 'Belum Ada Jatah Cuti';
+  static const String noLeaveAllocationDesc = 'Data alokasi cuti Anda tidak ditemukan.\nSilakan hubungi HR.';
+  static const String noLeaveApproverTitle = 'Penyetuju Belum Diatur';
+  static const String noLeaveApproverDesc = 'Data penyetuju cuti Anda belum diatur.\nSilakan hubungi HR.';
+  static const String backToHome = 'Kembali';
 
   static const String leaveType = 'Jenis Cuti';
   static const String leaveDate = 'Tanggal';

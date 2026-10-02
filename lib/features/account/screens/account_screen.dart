@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -10,6 +9,8 @@ import '../../auth/providers/auth_provider.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/account_menu_item.dart';
 import '../../employee/providers/current_employee_provider.dart';
+import '../../../core/widgets/app_error_widget.dart';
+import '../../../core/widgets/custom_loading_indicator.dart';
 
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
@@ -41,32 +42,19 @@ class AccountScreen extends ConsumerWidget {
                   ),
                 ),
                 currentEmployeeAsync.when(
-                  loading: () => Center(
+                  loading: () => const Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24.0),
-                      child: Lottie.asset(
-                        'assets/lottie/loading.json',
-                        width: 150,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 24.0),
+                      child: CustomLoadingIndicator(),
                     ),
                   ),
-                  error: (error, stack) => Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            AppStrings.errorServerSide,
-                            style: AppTextStyles.headingSmall.copyWith(color: AppColors.textDanger),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            AppStrings.errorDataNotFound,
-                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                          ),
-                        ],
-                      ),
+                  error: (error, stack) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                    child: AppErrorWidget(
+                      errorMessage: error.toString().replaceAll('Exception: ', ''),
+                      onRetry: () {
+                        ref.invalidate(currentEmployeeProvider);
+                      },
                     ),
                   ),
                   data: (employee) => ProfileCard(employee: employee),
