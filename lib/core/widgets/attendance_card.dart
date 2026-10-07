@@ -11,14 +11,23 @@ import '../../features/employee/providers/current_employee_provider.dart';
 import '../../features/home/providers/home_provider.dart';
 import '../../features/attendance/widgets/presence_note_bottom_sheet.dart';
 import 'app_snackbar.dart';
+import 'app_popup.dart';
+import 'package:geolocator/geolocator.dart';
 
-class AttendanceCard extends ConsumerWidget {
+class AttendanceCard extends ConsumerStatefulWidget {
   final bool transparentBackground;
 
   const AttendanceCard({
     super.key,
     this.transparentBackground = false,
   });
+
+  @override
+  ConsumerState<AttendanceCard> createState() => _AttendanceCardState();
+}
+
+class _AttendanceCardState extends ConsumerState<AttendanceCard> {
+  String? _activeLoadingType;
 
   String _formatTime(String time) {
     if (time.isEmpty) return '';
@@ -94,7 +103,7 @@ class AttendanceCard extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final shiftAsync = ref.watch(currentShiftProvider);
     final presenceState = ref.watch(presenceProvider);
     final employeeAsync = ref.watch(currentEmployeeProvider);
@@ -119,9 +128,9 @@ class AttendanceCard extends ConsumerWidget {
     });
 
     return Container(
-      margin: transparentBackground ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 24.0),
-      padding: transparentBackground ? const EdgeInsets.symmetric(vertical: 0.0, horizontal: 24.0) : const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-      decoration: transparentBackground
+      margin: widget.transparentBackground ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: widget.transparentBackground ? const EdgeInsets.symmetric(vertical: 0.0, horizontal: 24.0) : const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+      decoration: widget.transparentBackground
           ? null
           : BoxDecoration(
         gradient: const LinearGradient(
@@ -179,23 +188,27 @@ class AttendanceCard extends ConsumerWidget {
                     child: _buildActionButton(
                       icon: Icons.login,
                       label: AppStrings.checkIn,
-                      isLoading: isPresenceLoading,
+                      isLoading: isPresenceLoading && _activeLoadingType == 'IN',
                       onPressed: isCheckedIn ? null : () async {
                         final employee = employeeAsync.value;
                         if (employee == null) return;
                         
-                        Future<void> submit(String notes) async {
+                        setState(() { _activeLoadingType = 'IN'; });
+                        
+                        Future<void> processSubmit(String notes, String wfhNotes, Position position) async {
                           try {
                             await ref.read(presenceProvider.notifier).submitPresence(
                               employee.id, 
                               'IN', 
                               _getCurrentTimeForApi(),
-                              lateReason: notes,
+                              position,
+                              lateReason: notes.isNotEmpty ? notes : null,
+                              wfhReason: wfhNotes.isNotEmpty ? wfhNotes : null,
                             );
-                            if (notes.isNotEmpty && context.mounted) {
-                              Navigator.of(context).pop();
-                            }
                             if (context.mounted) {
+                              if (notes.isNotEmpty || wfhNotes.isNotEmpty) {
+                                Navigator.of(context).pop();
+                              }
                               context.push('/attendance-success', extra: {
                                 'isCheckIn': true,
                                 'date': _formatDate(),
@@ -204,6 +217,9 @@ class AttendanceCard extends ConsumerWidget {
                               });
                             }
                           } catch (e) {
+                            if ((notes.isNotEmpty || wfhNotes.isNotEmpty) && context.mounted) {
+                              Navigator.of(context).pop();
+                            }
                             if (context.mounted) {
                               AppSnackbar.show(
                                 context,
@@ -211,25 +227,77 @@ class AttendanceCard extends ConsumerWidget {
                                 type: SnackbarType.error,
                               );
                             }
-                            if (notes.isNotEmpty) {
-                              rethrow;
-                            }
                           }
                         }
 
-                        if (_isLate(shift.startTime)) {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: AppColors.transparent,
-                            builder: (context) => PresenceNoteBottomSheet(
-                              isCheckIn: true,
-                              timeLimit: startTime,
-                              onSubmit: submit,
-                            ),
+                        try {
+                          final checkResult = await ref.read(presenceProvider.notifier).checkLocation(
+                            shift.latitude, 
+                            shift.longitude, 
+                            shift.checkinRadius
                           );
-                        } else {
-                          await submit('');
+                          
+                          final isLate = _isLate(shift.startTime);
+
+                          if (checkResult.isOutOfRadius) {
+                            if (!context.mounted) return;
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AppPopup(
+                                svgAsset: 'assets/icons/popup_info_icon.svg',
+                                iconColor: AppColors.primaryBlueStart,
+                                title: AppStrings.wfhConfirmationTitle,
+                                description: AppStrings.wfhConfirmationMessage,
+                                primaryButtonText: AppStrings.lanjutkan,
+                                secondaryButtonText: AppStrings.batal,
+                                onSecondaryPressed: () => Navigator.pop(ctx),
+                                onPrimaryPressed: () {
+                                  Navigator.pop(ctx);
+                                  if (!context.mounted) return;
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: AppColors.transparent,
+                                    builder: (context) => PresenceNoteBottomSheet(
+                                      isCheckIn: true,
+                                      isLate: isLate,
+                                      isOutOfRadius: true,
+                                      timeLimit: startTime,
+                                      onSubmit: (notes, wfhNotes) => processSubmit(notes, wfhNotes, checkResult.position),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          } else if (isLate) {
+                            if (!context.mounted) return;
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: AppColors.transparent,
+                              builder: (context) => PresenceNoteBottomSheet(
+                                isCheckIn: true,
+                                isLate: true,
+                                isOutOfRadius: false,
+                                timeLimit: startTime,
+                                onSubmit: (notes, wfhNotes) => processSubmit(notes, wfhNotes, checkResult.position),
+                              ),
+                            );
+                          } else {
+                            await processSubmit('', '', checkResult.position);
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            AppSnackbar.show(
+                              context,
+                              message: e.toString().replaceAll('Exception: ', ''),
+                              type: SnackbarType.error,
+                            );
+                          }
+                        } finally {
+                          if (mounted) {
+                            setState(() { _activeLoadingType = null; });
+                          }
                         }
                       },
                     ),
@@ -239,23 +307,27 @@ class AttendanceCard extends ConsumerWidget {
                     child: _buildActionButton(
                       icon: Icons.logout,
                       label: AppStrings.checkOut,
-                      isLoading: isPresenceLoading,
+                      isLoading: isPresenceLoading && _activeLoadingType == 'OUT',
                       onPressed: (!isCheckedIn || isCheckedOut) ? null : () async {
                         final employee = employeeAsync.value;
                         if (employee == null) return;
                         
-                        Future<void> submit(String notes) async {
+                        setState(() { _activeLoadingType = 'OUT'; });
+                        
+                        Future<void> processSubmit(String notes, String wfhNotes, Position position) async {
                           try {
                             await ref.read(presenceProvider.notifier).submitPresence(
                               employee.id, 
                               'OUT', 
                               _getCurrentTimeForApi(),
-                              earlyReason: notes,
+                              position,
+                              earlyReason: notes.isNotEmpty ? notes : null,
+                              wfhReason: wfhNotes.isNotEmpty ? wfhNotes : null,
                             );
-                            if (notes.isNotEmpty && context.mounted) {
-                              Navigator.of(context).pop();
-                            }
                             if (context.mounted) {
+                              if (notes.isNotEmpty || wfhNotes.isNotEmpty) {
+                                Navigator.of(context).pop();
+                              }
                               context.push('/attendance-success', extra: {
                                 'isCheckIn': false,
                                 'date': _formatDate(),
@@ -264,6 +336,9 @@ class AttendanceCard extends ConsumerWidget {
                               });
                             }
                           } catch (e) {
+                            if ((notes.isNotEmpty || wfhNotes.isNotEmpty) && context.mounted) {
+                              Navigator.of(context).pop();
+                            }
                             if (context.mounted) {
                               AppSnackbar.show(
                                 context,
@@ -271,25 +346,77 @@ class AttendanceCard extends ConsumerWidget {
                                 type: SnackbarType.error,
                               );
                             }
-                            if (notes.isNotEmpty) {
-                              rethrow;
-                            }
                           }
                         }
 
-                        if (_isEarly(shift.endTime)) {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: AppColors.transparent,
-                            builder: (context) => PresenceNoteBottomSheet(
-                              isCheckIn: false,
-                              timeLimit: endTime,
-                              onSubmit: submit,
-                            ),
+                        try {
+                          final checkResult = await ref.read(presenceProvider.notifier).checkLocation(
+                            shift.latitude, 
+                            shift.longitude, 
+                            shift.checkinRadius
                           );
-                        } else {
-                          await submit('');
+                          
+                          final isEarly = _isEarly(shift.endTime);
+
+                          if (checkResult.isOutOfRadius) {
+                            if (!context.mounted) return;
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AppPopup(
+                                svgAsset: 'assets/icons/popup_info_icon.svg',
+                                iconColor: AppColors.primaryBlueStart,
+                                title: AppStrings.wfhConfirmationTitle,
+                                description: AppStrings.wfhConfirmationMessage,
+                                primaryButtonText: AppStrings.lanjutkan,
+                                secondaryButtonText: AppStrings.batal,
+                                onSecondaryPressed: () => Navigator.pop(ctx),
+                                onPrimaryPressed: () {
+                                  Navigator.pop(ctx);
+                                  if (!context.mounted) return;
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: AppColors.transparent,
+                                    builder: (context) => PresenceNoteBottomSheet(
+                                      isCheckIn: false,
+                                      isLate: isEarly,
+                                      isOutOfRadius: true,
+                                      timeLimit: endTime,
+                                      onSubmit: (notes, wfhNotes) => processSubmit(notes, wfhNotes, checkResult.position),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          } else if (isEarly) {
+                            if (!context.mounted) return;
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: AppColors.transparent,
+                              builder: (context) => PresenceNoteBottomSheet(
+                                isCheckIn: false,
+                                isLate: true,
+                                isOutOfRadius: false,
+                                timeLimit: endTime,
+                                onSubmit: (notes, wfhNotes) => processSubmit(notes, wfhNotes, checkResult.position),
+                              ),
+                            );
+                          } else {
+                            await processSubmit('', '', checkResult.position);
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            AppSnackbar.show(
+                              context,
+                              message: e.toString().replaceAll('Exception: ', ''),
+                              type: SnackbarType.error,
+                            );
+                          }
+                        } finally {
+                          if (mounted) {
+                            setState(() { _activeLoadingType = null; });
+                          }
                         }
                       },
                     ),

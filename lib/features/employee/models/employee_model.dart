@@ -10,6 +10,7 @@ class EmployeeModel {
   final String placement;
   final String? expenseApprover;
   final String? company;
+  final String? defaultShift;
 
   EmployeeModel({
     required this.id,
@@ -23,6 +24,7 @@ class EmployeeModel {
     required this.placement,
     this.expenseApprover,
     this.company,
+    this.defaultShift,
   });
 
   EmployeeModel copyWith({
@@ -37,6 +39,7 @@ class EmployeeModel {
     String? placement,
     String? expenseApprover,
     String? company,
+    String? defaultShift,
   }) {
     return EmployeeModel(
       id: id ?? this.id,
@@ -50,6 +53,7 @@ class EmployeeModel {
       placement: placement ?? this.placement,
       expenseApprover: expenseApprover ?? this.expenseApprover,
       company: company ?? this.company,
+      defaultShift: defaultShift ?? this.defaultShift,
     );
   }
 
@@ -66,6 +70,7 @@ class EmployeeModel {
       placement: json['department'] ?? '',
       expenseApprover: json['expense_approver'],
       company: json['company'],
+      defaultShift: json['default_shift'],
     );
   }
 }

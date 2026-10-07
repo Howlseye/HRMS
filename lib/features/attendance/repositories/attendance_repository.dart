@@ -15,7 +15,7 @@ class AttendanceRepository {
 
   AttendanceRepository(this._dio);
 
-  Future<void> submitPresence(String employeeId, String logType, String time, {String? lateReason, String? earlyReason}) async {
+  Future<void> submitPresence(String employeeId, String logType, String time, {String? lateReason, String? earlyReason, String? wfhReason, double? latitude, double? longitude}) async {
     try {
       final Map<String, dynamic> data = {
         "employee": employeeId,
@@ -29,6 +29,15 @@ class AttendanceRepository {
       }
       if (earlyReason != null && earlyReason.isNotEmpty) {
         data["custom_early_reason"] = earlyReason;
+      }
+      if (wfhReason != null && wfhReason.isNotEmpty) {
+        data["custom_wfh_reason"] = wfhReason;
+      }
+      if (latitude != null) {
+        data["custom_latitude"] = latitude;
+      }
+      if (longitude != null) {
+        data["custom_longitude"] = longitude;
       }
 
       final response = await _dio.post(

@@ -6,12 +6,16 @@ import '../../../core/theme/app_text_styles.dart';
 
 class PresenceNoteBottomSheet extends ConsumerStatefulWidget {
   final bool isCheckIn;
+  final bool isLate;
+  final bool isOutOfRadius;
   final String timeLimit;
-  final Future<void> Function(String notes) onSubmit;
+  final Future<void> Function(String notes, String wfhNotes) onSubmit;
 
   const PresenceNoteBottomSheet({
     super.key,
     required this.isCheckIn,
+    this.isLate = true,
+    this.isOutOfRadius = false,
     required this.timeLimit,
     required this.onSubmit,
   });
@@ -22,24 +26,32 @@ class PresenceNoteBottomSheet extends ConsumerStatefulWidget {
 
 class _PresenceNoteBottomSheetState extends ConsumerState<PresenceNoteBottomSheet> {
   final TextEditingController _notesController = TextEditingController();
+  final TextEditingController _wfhController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
     _notesController.dispose();
+    _wfhController.dispose();
     super.dispose();
   }
 
   void _submit() async {
     final notes = _notesController.text.trim();
-    if (notes.isEmpty) return;
+    final wfhNotes = _wfhController.text.trim();
+    
+    if (widget.isLate && notes.isEmpty) return;
+    if (widget.isOutOfRadius && wfhNotes.isEmpty) return;
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      await widget.onSubmit(notes);
+      await widget.onSubmit(notes, wfhNotes);
+    } catch (e) {
+      if (mounted) {
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -116,117 +128,182 @@ class _PresenceNoteBottomSheetState extends ConsumerState<PresenceNoteBottomShee
               const SizedBox(height: 20),
               
 
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.menuBgPink,
-                  borderRadius: BorderRadius.circular(4),
+              if (widget.isLate)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.menuBgPink,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: AppColors.textDanger,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            text: widget.isCheckIn
+                                ? AppStrings.noteLateCheckInPrefix
+                                : AppStrings.noteEarlyCheckOutPrefix,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textDanger,
+                              height: 20 / 14,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: timeDiff,
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: AppColors.textDanger,
+                                  fontWeight: FontWeight.w700,
+                                  height: 20 / 14,
+                                ),
+                              ),
+                              TextSpan(
+                                text: widget.isCheckIn
+                                    ? AppStrings.noteLateCheckInSuffix
+                                    : AppStrings.noteEarlyCheckOutSuffix,
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: AppColors.textDanger,
+                                  height: 20 / 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(
+              if (widget.isLate)
+                const SizedBox(height: 24),
+              
+
+              if (widget.isLate)
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
-                      Icons.info_outline,
-                      size: 16,
-                      color: AppColors.textDanger,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          text: widget.isCheckIn
-                              ? AppStrings.noteLateCheckInPrefix
-                              : AppStrings.noteEarlyCheckOutPrefix,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textDanger,
-                            height: 20 / 14,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: timeDiff,
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textDanger,
-                                fontWeight: FontWeight.w700,
-                                height: 20 / 14,
-                              ),
-                            ),
-                            TextSpan(
-                              text: widget.isCheckIn
-                                  ? AppStrings.noteLateCheckInSuffix
-                                  : AppStrings.noteEarlyCheckOutSuffix,
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textDanger,
-                                height: 20 / 14,
-                              ),
-                            ),
-                          ],
+                    RichText(
+                      text: TextSpan(
+                        text: widget.isCheckIn ? AppStrings.reasonLate : AppStrings.reasonEarlyOut,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                          height: 20 / 14,
                         ),
+                        children: [
+                          TextSpan(
+                            text: '*',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textDanger,
+                              height: 20 / 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      height: 80,
+                      child: TextFormField(
+                        controller: _notesController,
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: widget.isCheckIn ? AppStrings.noteLateCheckInHint : AppStrings.noteEarlyCheckOutHint,
+                          hintStyle: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.iconDisabled,
+                          ),
+                          contentPadding: const EdgeInsets.all(12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: const BorderSide(color: AppColors.borderDivider),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: const BorderSide(color: AppColors.borderDivider),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: const BorderSide(color: AppColors.primaryBlueStart),
+                          ),
+                          filled: true,
+                          fillColor: AppColors.bgWhite,
+                        ),
+                        onChanged: (_) => setState(() {}),
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 24),
+              if (widget.isLate && widget.isOutOfRadius)
+                const SizedBox(height: 16),
               
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      text: widget.isCheckIn ? AppStrings.reasonLate : AppStrings.reasonEarlyOut,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
-                        height: 20 / 14,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: '*',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textDanger,
-                            height: 20 / 14,
+              if (widget.isOutOfRadius)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: AppStrings.reasonWfh,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                          height: 20 / 14,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '*',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textDanger,
+                              height: 20 / 14,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  SizedBox(
-                    height: 126,
-                    child: TextFormField(
-                      controller: _notesController,
-                      maxLines: null,
-                      expands: true,
-                      textAlignVertical: TextAlignVertical.top,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
+                        ],
                       ),
-                      decoration: InputDecoration(
-                        hintText: widget.isCheckIn ? AppStrings.noteLateCheckInHint : AppStrings.noteEarlyCheckOutHint,
-                        hintStyle: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.iconDisabled,
-                        ),
-                        contentPadding: const EdgeInsets.all(12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: const BorderSide(color: AppColors.borderDivider),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: const BorderSide(color: AppColors.borderDivider),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: const BorderSide(color: AppColors.primaryBlueStart),
-                        ),
-                        filled: true,
-                        fillColor: AppColors.bgWhite,
-                      ),
-                      onChanged: (_) => setState(() {}),
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      height: 80,
+                      child: TextFormField(
+                        controller: _wfhController,
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: AppStrings.noteWfhHint,
+                          hintStyle: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.iconDisabled,
+                          ),
+                          contentPadding: const EdgeInsets.all(12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: const BorderSide(color: AppColors.borderDivider),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: const BorderSide(color: AppColors.borderDivider),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide: const BorderSide(color: AppColors.primaryBlueStart),
+                          ),
+                          filled: true,
+                          fillColor: AppColors.bgWhite,
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 24),
               
 
@@ -234,7 +311,12 @@ class _PresenceNoteBottomSheetState extends ConsumerState<PresenceNoteBottomShee
                 width: double.infinity,
                 height: 40,
                 child: ElevatedButton(
-                  onPressed: _notesController.text.trim().isEmpty || _isLoading ? null : _submit,
+                  onPressed: () {
+                    if (widget.isLate && _notesController.text.trim().isEmpty) return null;
+                    if (widget.isOutOfRadius && _wfhController.text.trim().isEmpty) return null;
+                    if (_isLoading) return null;
+                    return _submit;
+                  }(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlueStart,
                     disabledBackgroundColor: AppColors.buttonDisabled,
@@ -256,9 +338,11 @@ class _PresenceNoteBottomSheetState extends ConsumerState<PresenceNoteBottomShee
                       : Text(
                           widget.isCheckIn ? AppStrings.sendCheckIn : AppStrings.sendCheckOut,
                           style: AppTextStyles.buttonText.copyWith(
-                            color: _notesController.text.trim().isEmpty
-                                ? AppColors.iconDisabled
-                                : AppColors.textWhite,
+                            color: () {
+                              if (widget.isLate && _notesController.text.trim().isEmpty) return AppColors.iconDisabled;
+                              if (widget.isOutOfRadius && _wfhController.text.trim().isEmpty) return AppColors.iconDisabled;
+                              return AppColors.textWhite;
+                            }(),
                           ),
                         ),
                 ),

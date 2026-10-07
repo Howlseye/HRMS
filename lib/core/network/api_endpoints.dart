@@ -14,8 +14,9 @@ class ApiEndpoints {
   static const String getEmployeeDetail = 'resource/Employee/{id}';
 
   //Shift
-  static const String getShift = 'resource/Shift Assignment?fields=["shift_type","start_date","end_date"]';
+  static const String getShift = 'resource/Shift Assignment?fields=["shift_type","start_date","end_date", "shift_location"]';
   static const String getShiftDetail = 'resource/Shift Type/{shift}';
+  static const String getShiftLocation = 'resource/Shift Location/{location}';
 
   //attendance
   static const String getActivity = 'resource/Employee Checkin?fields=["*"]&filters=[["time", ">=", {start_date}], ["time", "<=", {end_date}]]';

@@ -36,6 +36,9 @@ class AppStrings {
   static const String alreadyCheckedIn = 'Menunggu jam kerja selesai';
   static const String alreadyCheckedOut = 'Sudah check out hari ini';
   
+  static const String wfhConfirmationTitle = 'Konfirmasi WFH';
+  static const String wfhConfirmationMessage = 'Lokasi Anda berada di luar radius kantor. Absensi ini akan tercatat sebagai WFH. Yakin ingin melanjutkan?';
+  
   static const String menuAbsensi = 'Absensi';
   static const String menuReimburse = 'Reimburse';
   static const String menuCuti = 'Cuti';
@@ -57,6 +60,13 @@ class AppStrings {
   static const String noAttendanceHistory = 'Tidak ada riwayat kehadiran';
   static const String noAttendanceHistoryDesc = 'Belum ada riwayat kehadiran yang\ntercatat untuk periode ini.';
   static const String noReason = 'Tidak mencantumkan alasan';
+  
+  static const String errorLocationDataNotFound = 'Data lokasi kantor tidak tersedia. Hubungi admin.';
+  static const String errorGpsDisabled = 'Layanan lokasi (GPS) tidak aktif.';
+  static const String errorLocationPermissionDenied = 'Izin akses lokasi ditolak.';
+  static const String errorLocationPermissionDeniedForever = 'Izin lokasi ditolak secara permanen. Silakan aktifkan melalui pengaturan perangkat.';
+  static const String reasonWfh = 'Alasan WFH';
+  static const String noteWfhHint = 'Berikan alasan melakukan WFH...';
 
   // Detail Attendance Screen
   static const String todatsActivity = 'Aktivitas Hari Ini';
