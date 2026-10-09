@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/status_badge.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../models/reimbursement_model.dart';
 
@@ -95,19 +96,10 @@ class ReimbursementCard extends StatelessWidget {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: _getStatusBgColor(),
-                    border: Border.all(color: _getStatusColor()),
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Text(
-                    _getStatusText(),
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: _getStatusColor(),
-                    ),
-                  ),
+                StatusBadge(
+                  text: _getStatusText(),
+                  textColor: _getStatusColor(),
+                  backgroundColor: _getStatusBgColor(),
                 ),
               ],
             ),

@@ -5,7 +5,11 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/main/screens/main_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
 import '../../features/attendance/screens/attendance_screen.dart';
-import '../../features/attendance/screens/attendance_log_screen.dart';
+import '../../features/log_book/screens/log_book_screen.dart';
+import '../../features/log_book/screens/log_book_detail_screen.dart';
+import '../../features/log_book/screens/add_log_book_screen.dart';
+import '../../features/log_book/screens/add_log_book_success_screen.dart';
+import '../../features/log_book/models/log_book_entry.dart';
 import '../../features/attendance/screens/attendance_detail_screen.dart';
 import '../../features/attendance/models/attendance_log_entry.dart';
 import '../../features/employee/screens/employee_detail_screen.dart';
@@ -83,6 +87,29 @@ class AppRouter {
             context: context,
             state: state,
             child: AnnouncementDetailScreen(announcement: args),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/add-log-book',
+        pageBuilder: (context, state) => _buildPageWithDefaultTransition(
+          context: context,
+          state: state,
+          child: const AddLogBookScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/add-log-book-success',
+        pageBuilder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: AddLogBookSuccessScreen(
+              activities: args['activities'] as List<String>,
+              summary: args['summary'] as String,
+              constraint: args['constraint'] as String,
+            ),
           );
         },
       ),
@@ -203,8 +230,19 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithDefaultTransition(
           context: context,
           state: state,
-          child: const AttendanceLogScreen(),
+          child: const LogBookScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/log-book-detail',
+        pageBuilder: (context, state) {
+          final entry = state.extra as LogBookEntry;
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: LogBookDetailScreen(logEntry: entry),
+          );
+        },
       ),
       GoRoute(
         path: '/attendance-detail',

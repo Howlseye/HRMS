@@ -49,20 +49,10 @@ class _AttendanceCardState extends ConsumerState<AttendanceCard> {
     return false;
   }
 
-  bool _isEarly(String endTime) {
-    if (endTime.isEmpty) return false;
-    final now = DateTime.now();
-    final parts = endTime.split(':');
-    if (parts.length >= 2) {
-      final shiftEnd = DateTime(now.year, now.month, now.day, int.parse(parts[0]), int.parse(parts[1]));
-      return now.isBefore(shiftEnd);
-    }
-    return false;
-  }
 
   String _formatDate() {
     final now = DateTime.now();
-    final dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    final dayNames = AppStrings.shortDayNames;
     final dayName = dayNames[now.weekday - 1];
     final monthName = AppStrings.monthNames[now.month - 1];
     return '$dayName, ${now.day.toString().padLeft(2, '0')} $monthName ${now.year}';
@@ -308,116 +298,8 @@ class _AttendanceCardState extends ConsumerState<AttendanceCard> {
                       icon: Icons.logout,
                       label: AppStrings.checkOut,
                       isLoading: isPresenceLoading && _activeLoadingType == 'OUT',
-                      onPressed: (!isCheckedIn || isCheckedOut) ? null : () async {
-                        final employee = employeeAsync.value;
-                        if (employee == null) return;
-                        
-                        setState(() { _activeLoadingType = 'OUT'; });
-                        
-                        Future<void> processSubmit(String notes, String wfhNotes, Position position) async {
-                          try {
-                            await ref.read(presenceProvider.notifier).submitPresence(
-                              employee.id, 
-                              'OUT', 
-                              _getCurrentTimeForApi(),
-                              position,
-                              earlyReason: notes.isNotEmpty ? notes : null,
-                              wfhReason: wfhNotes.isNotEmpty ? wfhNotes : null,
-                            );
-                            if (context.mounted) {
-                              if (notes.isNotEmpty || wfhNotes.isNotEmpty) {
-                                Navigator.of(context).pop();
-                              }
-                              context.push('/attendance-success', extra: {
-                                'isCheckIn': false,
-                                'date': _formatDate(),
-                                'timeRange': '${AppStrings.workHoursPrefix}$startTime – $endTime',
-                                'alertMessage': notes.isNotEmpty ? _calculateTimeDifferenceForSubmit(endTime, false) : null,
-                              });
-                            }
-                          } catch (e) {
-                            if ((notes.isNotEmpty || wfhNotes.isNotEmpty) && context.mounted) {
-                              Navigator.of(context).pop();
-                            }
-                            if (context.mounted) {
-                              AppSnackbar.show(
-                                context,
-                                message: e.toString().replaceAll('Exception: ', ''),
-                                type: SnackbarType.error,
-                              );
-                            }
-                          }
-                        }
-
-                        try {
-                          final checkResult = await ref.read(presenceProvider.notifier).checkLocation(
-                            shift.latitude, 
-                            shift.longitude, 
-                            shift.checkinRadius
-                          );
-                          
-                          final isEarly = _isEarly(shift.endTime);
-
-                          if (checkResult.isOutOfRadius) {
-                            if (!context.mounted) return;
-                            showDialog(
-                              context: context,
-                              builder: (ctx) => AppPopup(
-                                svgAsset: 'assets/icons/popup_info_icon.svg',
-                                iconColor: AppColors.primaryBlueStart,
-                                title: AppStrings.wfhConfirmationTitle,
-                                description: AppStrings.wfhConfirmationMessage,
-                                primaryButtonText: AppStrings.lanjutkan,
-                                secondaryButtonText: AppStrings.batal,
-                                onSecondaryPressed: () => Navigator.pop(ctx),
-                                onPrimaryPressed: () {
-                                  Navigator.pop(ctx);
-                                  if (!context.mounted) return;
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: AppColors.transparent,
-                                    builder: (context) => PresenceNoteBottomSheet(
-                                      isCheckIn: false,
-                                      isLate: isEarly,
-                                      isOutOfRadius: true,
-                                      timeLimit: endTime,
-                                      onSubmit: (notes, wfhNotes) => processSubmit(notes, wfhNotes, checkResult.position),
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          } else if (isEarly) {
-                            if (!context.mounted) return;
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: AppColors.transparent,
-                              builder: (context) => PresenceNoteBottomSheet(
-                                isCheckIn: false,
-                                isLate: true,
-                                isOutOfRadius: false,
-                                timeLimit: endTime,
-                                onSubmit: (notes, wfhNotes) => processSubmit(notes, wfhNotes, checkResult.position),
-                              ),
-                            );
-                          } else {
-                            await processSubmit('', '', checkResult.position);
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            AppSnackbar.show(
-                              context,
-                              message: e.toString().replaceAll('Exception: ', ''),
-                              type: SnackbarType.error,
-                            );
-                          }
-                        } finally {
-                          if (mounted) {
-                            setState(() { _activeLoadingType = null; });
-                          }
-                        }
+                      onPressed: (!isCheckedIn || isCheckedOut) ? null : () {
+                        context.push('/add-log-book');
                       },
                     ),
                   ),

@@ -40,6 +40,7 @@ class AppColors {
 
   static const Color borderLight = Color(0xFFE7E8EC);
   static const Color borderDivider = Color(0xFFEAECF0);
+  static const Color borderGreen = Color(0xFFA4E4AB);
   static const Color buttonDisabled = Color(0xFFD5D6D9);
   static const Color iconDisabled = Color(0xFFABADB2);
   static const Color iconGray = Color(0xFF73767F);

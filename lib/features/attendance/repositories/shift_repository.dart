@@ -57,10 +57,9 @@ class ShiftRepository {
       }
       
       if (activeShift == null && defaultShift != null && defaultShift.isNotEmpty) {
-        // Fallback to default_shift
         activeShift = {
           'shift_type': defaultShift,
-          'shift_location': null, // We might not know location of default shift, or assume no location check
+          'shift_location': null,
         };
       }
 
@@ -98,9 +97,8 @@ class ShiftRepository {
               locationName: locData['location_name'] as String?,
             );
           }
-        } catch (e) {
-          // Gagal mengambil lokasi tidak boleh menggagalkan proses absensi
-          // Biarkan null
+        } catch (_) {
+          shiftModel = shiftModel.copyWith();
         }
       }
 

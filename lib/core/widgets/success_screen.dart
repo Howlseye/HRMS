@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import '../constants/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import 'custom_button.dart';
@@ -10,6 +11,7 @@ class SuccessScreen extends StatelessWidget {
   final String buttonText;
   final VoidCallback onButtonPressed;
   final VoidCallback onClosePressed;
+  final String? lottieAsset;
 
   const SuccessScreen({
     super.key,
@@ -18,6 +20,7 @@ class SuccessScreen extends StatelessWidget {
     required this.buttonText,
     required this.onButtonPressed,
     required this.onClosePressed,
+    this.lottieAsset,
   });
 
   @override
@@ -42,18 +45,32 @@ class SuccessScreen extends StatelessWidget {
             ),
             
             Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/success.svg',
-                        height: 80,
-                        width: 80,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
                       ),
-                      const SizedBox(height: 24),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            lottieAsset != null
+                                ? Lottie.asset(
+                                    lottieAsset!,
+                                    height: 240,
+                                    width: 240,
+                                    fit: BoxFit.contain,
+                                    repeat: false,
+                                  )
+                                : SvgPicture.asset(
+                                    'assets/icons/success.svg',
+                                    height: 80,
+                                    width: 80,
+                                  ),
+                            SizedBox(height: lottieAsset != null ? 0 : 24),
                       Text(
                         title,
                         style: AppTextStyles.displayMediumBold.copyWith(
@@ -66,8 +83,11 @@ class SuccessScreen extends StatelessWidget {
                         subtitleWidget!,
                       ],
                     ],
-                  ),
-                ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
 

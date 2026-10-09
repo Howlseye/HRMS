@@ -48,6 +48,8 @@ class CustomButton extends StatelessWidget {
               onPressed: isLoading ? null : onPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryBlueStart,
+                disabledBackgroundColor: AppColors.buttonDisabled,
+                disabledForegroundColor: AppColors.iconDisabled,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -62,7 +64,7 @@ class CustomButton extends StatelessWidget {
                   : Text(
                       text,
                       style: AppTextStyles.buttonText.copyWith(
-                        color: AppColors.textWhite,
+                        color: onPressed == null ? AppColors.iconDisabled : AppColors.textWhite,
                       ),
                     ),
             ),

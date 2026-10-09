@@ -60,6 +60,64 @@ class AppStrings {
   static const String noAttendanceHistory = 'Tidak ada riwayat kehadiran';
   static const String noAttendanceHistoryDesc = 'Belum ada riwayat kehadiran yang\ntercatat untuk periode ini.';
   static const String noReason = 'Tidak mencantumkan alasan';
+
+  // Log Book Screen (Dummy Data)
+  static const String logBookTitle = 'Log Book';
+  static const String dummyMonth = 'Agustus 2026';
+  static const String statDaysRecorded = 'Hari Tercatat';
+  static const String statDaysValue = '20/20';
+  static const String statWaiting = 'Waiting';
+  static const String statWaitingValue = '0';
+  static const String statRejected = 'Rejected';
+  static const String statRejectedValue = '0';
+  static const String listDailyLog = 'List Daily Log';
+  static const String btnExport = 'Export';
+  
+  // Add Log Book Screen (Check Out)
+  static const String addLogBookTitle = 'Check Out';
+  static const String addLogBookDatePlaceholder = '1 September 2026';
+  static const String addLogBookActivityQuestion = 'Apa yang kamu kerjakan hari ini';
+  static const String addLogBookActivityOptionsDevelopment = 'Development';
+  static const String addLogBookActivityOptionsBugFixing = 'Bug fixing';
+  static const String addLogBookActivityOptionsTesting = 'Testing';
+  static const String addLogBookActivityOptionsMeeting = 'Meeting';
+  static const String addLogBookActivityOptionsDocumentation = 'Documentation';
+  static const String addLogBookActivityOptionsSupport = 'Support';
+  static const String addLogBookActivityOptionsOther = 'Other';
+  static const String addLogBookSummaryLabel = 'Ringkasan Aktivitas';
+  static const String addLogBookSummaryHint = 'Jelaskan aktivitas hari ini';
+  static const String addLogBookConstraintLabel = 'Ada kendala?';
+  static const String addLogBookConstraintHint = 'Jelaskan kendala saat mengerjakan';
+  static const String btnSubmit = 'Kirim';
+  
+  // Add Log Book Success Screen
+  static const String addLogBookSuccessTitle = 'Check Out Dikirim';
+  static const String addLogBookSuccessProgressPrefix = 'Progress Bulan Ini: ';
+  static const String addLogBookSuccessActivityLabel = 'Aktivitas';
+  static const String addLogBookSuccessDetailLabel = 'Detail';
+  static const String addLogBookSuccessConstraintLabel = 'Kendala';
+  static const String btnBack = 'Kembali';
+
+  static const String dummyDate1 = 'Sen, 3 Agu 2026';
+  static const String dummyDate2 = 'Sel, 4 Agu 2026';
+  static const String dummyDate3 = 'Rab, 5 Agu 2026';
+  static const String dummyDate4 = 'Kam, 6 Agu 2026';
+  static const String dummyDate5 = 'Jum, 7 Agu 2026';
+  static const String dummyDate6 = 'Sen, 10 Agu 2026';
+  static const String statusNotStarted = 'Not Started';
+  static const String detailLogTitle = 'Detail Log';
+  static const String checkInOut = 'Check in & out';
+  static const String activity = 'Aktivitas';
+  static const String detail = 'Detail';
+  static const String constraints = 'Kendala';
+  static const String rejectReasonLabel = 'Alasan Reject';
+  static const String exportLogBookTitle = 'Export Log Book';
+  static const String exportLogBookDesc = 'Export data Log Book ke format Excel.';
+  static const String exportPeriod = 'Periode';
+  static const String exportFormat = 'Format';
+  static const String exportFormatExcel = 'Excel (.xlsx)';
+  static const String exportDataCount = 'Data yang akan diekspor';
+  static const String exportDataCountValue = '20 hari';
   
   static const String errorLocationDataNotFound = 'Data lokasi kantor tidak tersedia. Hubungi admin.';
   static const String errorGpsDisabled = 'Layanan lokasi (GPS) tidak aktif.';
@@ -99,6 +157,10 @@ class AppStrings {
   static const String checkInSent = 'Check In Dikirim';
   static const String checkOutSent = 'Check Out Dikirim';
   static const String back = 'Kembali';
+
+  // Log Book
+  static const List<String> shortDayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+  static const String workingHoursFull = 'Jam Kerja 08:00 – 17:00';
 
   // Bottom Navigation
   static const String navHome = 'Home';

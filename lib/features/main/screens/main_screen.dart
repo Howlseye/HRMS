@@ -4,6 +4,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../home/screens/home_screen.dart';
 import '../../notifications/screens/notification_screen.dart';
 import '../../account/screens/account_screen.dart';
+import '../../log_book/screens/log_book_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
+    const LogBookScreen(),
     const NotificationScreen(),
     const AccountScreen(),
   ];
@@ -51,6 +53,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
             label: AppStrings.navHome,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book_outlined),
+            activeIcon: Icon(Icons.book),
+            label: AppStrings.logBook,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications_none),
