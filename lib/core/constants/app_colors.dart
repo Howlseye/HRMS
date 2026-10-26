@@ -25,10 +25,12 @@ class AppColors {
   static const Color textDark = Color(0xFF0F172A);
   static const Color textWhite = Color(0xFFFFFFFF);
   static const Color textDanger = Color(0xFFFF3548);
+  static const Color textMissed = Color(0xFFA90000);
+  static const Color menuBgMissed = Color(0x1AA90000);
   static const Color textSuccess = Color(0xFF22C55E);
   static const Color textWarning = Color(0xFFF59E0B);
   
-  static const Color iconYellow = Color(0xFFFFBB34);
+  static const Color iconYellow = Color(0xFF966401);
   static const Color iconPurple = Color(0xFF5557CD);
   static const Color iconOrange = Color(0xFFFF6E41);
   static const Color menuBgOrangeLight = Color(0xFFFFF6E3);
@@ -41,6 +43,7 @@ class AppColors {
   static const Color borderLight = Color(0xFFE7E8EC);
   static const Color borderDivider = Color(0xFFEAECF0);
   static const Color borderGreen = Color(0xFFA4E4AB);
+  static const Color borderBlueLight = Color(0xFF97C8EF);
   static const Color buttonDisabled = Color(0xFFD5D6D9);
   static const Color iconDisabled = Color(0xFFABADB2);
   static const Color iconGray = Color(0xFF73767F);
@@ -49,4 +52,8 @@ class AppColors {
   static const Color dragHandle = Color(0xFF79747E);
   static const Color filterChipBgActive = Color(0xFFF6FBFF);
   static const Color filterChipBorderActive = Color(0xFF3293DF);
+
+  static const Color borderSimpleEmpty = Color(0xFFD9D9D9);
+  static const Color bgSimpleEmpty = Color(0xFFFAFAFA);
+  static const Color bgSimpleEmptyBase = Color(0xFFF5F5F5);
 }

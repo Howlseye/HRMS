@@ -7,6 +7,7 @@ class LogBookEntry {
   final String detail;
   final String constraints;
   final String? rejectReason;
+  final DateTime? rawDate;
 
   LogBookEntry({
     required this.date,
@@ -17,5 +18,6 @@ class LogBookEntry {
     required this.detail,
     required this.constraints,
     this.rejectReason,
+    this.rawDate,
   });
 }

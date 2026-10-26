@@ -8,8 +8,11 @@ import '../../features/attendance/screens/attendance_screen.dart';
 import '../../features/log_book/screens/log_book_screen.dart';
 import '../../features/log_book/screens/log_book_detail_screen.dart';
 import '../../features/log_book/screens/add_log_book_screen.dart';
+import '../../features/log_book/screens/add_task_screen.dart';
+import '../../features/log_book/models/task_item_model.dart';
 import '../../features/log_book/screens/add_log_book_success_screen.dart';
 import '../../features/log_book/models/log_book_entry.dart';
+import '../../features/log_book/models/log_book_template_model.dart';
 import '../../features/attendance/screens/attendance_detail_screen.dart';
 import '../../features/attendance/models/attendance_log_entry.dart';
 import '../../features/employee/screens/employee_detail_screen.dart';
@@ -97,6 +100,17 @@ class AppRouter {
           state: state,
           child: const AddLogBookScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/add-task',
+        pageBuilder: (context, state) {
+          final initialTask = state.extra as TaskItem?;
+          return _buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: AddTaskScreen(initialTask: initialTask),
+          );
+        },
       ),
       GoRoute(
         path: '/add-log-book-success',
@@ -236,6 +250,19 @@ class AppRouter {
       GoRoute(
         path: '/log-book-detail',
         pageBuilder: (context, state) {
+          if (state.extra is Map<String, dynamic>) {
+            final map = state.extra as Map<String, dynamic>;
+            return _buildPageWithDefaultTransition(
+              context: context,
+              state: state,
+              child: LogBookDetailScreen(
+                logEntry: map['entry'] as LogBookEntry,
+                employeeName: map['employeeName'] as String?,
+                employeeRole: map['employeeRole'] as String?,
+                timesheet: map['timesheet'] as TimesheetInfo?,
+              ),
+            );
+          }
           final entry = state.extra as LogBookEntry;
           return _buildPageWithDefaultTransition(
             context: context,

@@ -61,19 +61,35 @@ final dioProvider = Provider<Dio>((ref) {
             } else if (e.response?.statusCode == 500) {
               errorMessage = AppStrings.errorInternalServer;
             } else if (e.response?.statusCode == 417) {
-              final data = e.response?.data;
-              if (data is Map<String, dynamic> && data.containsKey('_server_messages')) {
+              dynamic data = e.response?.data;
+              if (data is String) {
                 try {
-                  final messages = jsonDecode(data['_server_messages'] as String) as List;
-                  if (messages.isNotEmpty) {
-                    final msgObj = jsonDecode(messages.first as String);
-                    errorMessage = msgObj['message'] ?? AppStrings.errorSystem;
-                  }
-                } catch (_) {
-                  errorMessage = AppStrings.errorSystem;
+                  data = jsonDecode(data);
+                } catch (_) {}
+              }
+              String rawMessage = '';
+              if (data is Map<String, dynamic>) {
+                if (data.containsKey('_server_messages')) {
+                  try {
+                    final messages = jsonDecode(data['_server_messages'] as String) as List;
+                    if (messages.isNotEmpty) {
+                      final msgObj = jsonDecode(messages.first as String);
+                      rawMessage = msgObj['message']?.toString() ?? '';
+                    }
+                  } catch (_) {}
                 }
-              } else if (data is Map<String, dynamic> && data.containsKey('message')) {
-                errorMessage = data['message'].toString();
+                if (rawMessage.isEmpty && data.containsKey('exception')) {
+                  rawMessage = data['exception'].toString();
+                }
+                if (rawMessage.isEmpty && data.containsKey('message')) {
+                  rawMessage = data['message'].toString();
+                }
+              } else if (data is String) {
+                rawMessage = data;
+              }
+
+              if (rawMessage.isNotEmpty) {
+                errorMessage = _cleanErrorMessage(rawMessage);
               } else {
                 errorMessage = '${AppStrings.errorSystem} 417';
               }
@@ -103,3 +119,14 @@ final dioProvider = Provider<Dio>((ref) {
 
   return dio;
 });
+
+String _cleanErrorMessage(String raw) {
+  String cleaned = raw.split(RegExp(r'\s*:\s*<a|\s*<a')).first.trim();
+  if (cleaned.contains(': ')) {
+    final firstPart = cleaned.split(': ').first;
+    if (firstPart.contains('.') || firstPart.endsWith('Error') || firstPart.endsWith('Exception')) {
+      cleaned = cleaned.substring(firstPart.length + 2).trim();
+    }
+  }
+  return cleaned.replaceAll(RegExp(r'<[^>]*>'), '').trim();
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -40,7 +41,7 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
           showDialog(
             context: context,
             builder: (ctx) => AppPopup(
-              svgAsset: 'assets/icons/popup_cancel_icon.svg',
+              svgAsset: AppAssets.popupCancelIcon,
               title: AppStrings.deleteDetailConfirmTitle,
               description: AppStrings.deleteDetailConfirmDesc,
               primaryButtonText: AppStrings.confirmDelete,
@@ -252,7 +253,7 @@ class _NewReimbursementScreenState extends ConsumerState<NewReimbursementScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SvgPicture.asset(
-                                  'assets/icons/empty_data.svg',
+                                  AppAssets.emptyData,
                                   width: 120,
                                 ),
                                 const SizedBox(height: 12),

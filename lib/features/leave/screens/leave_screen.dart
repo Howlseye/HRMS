@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -88,7 +89,7 @@ class _LeaveScreenState extends ConsumerState<LeaveScreen> {
                 context: context,
                 barrierDismissible: false,
                 builder: (context) => AppPopup(
-                  svgAsset: 'assets/icons/popup_cancel_icon.svg',
+                  svgAsset: AppAssets.popupCancelIcon,
                   title: title!,
                   description: desc!,
                   primaryButtonText: AppStrings.backToHome,
@@ -227,7 +228,7 @@ class _LeaveScreenState extends ConsumerState<LeaveScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SvgPicture.asset(
-                                      'assets/icons/empty_data.svg',
+                                      AppAssets.emptyData,
                                       width: 100,
                                     ),
                                     const SizedBox(height: 24),

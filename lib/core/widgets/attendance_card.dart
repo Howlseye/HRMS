@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../constants/app_assets.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../theme/app_text_styles.dart';
@@ -234,7 +235,7 @@ class _AttendanceCardState extends ConsumerState<AttendanceCard> {
                             showDialog(
                               context: context,
                               builder: (ctx) => AppPopup(
-                                svgAsset: 'assets/icons/popup_info_icon.svg',
+                                svgAsset: AppAssets.popupInfoIcon,
                                 iconColor: AppColors.primaryBlueStart,
                                 title: AppStrings.wfhConfirmationTitle,
                                 description: AppStrings.wfhConfirmationMessage,
@@ -306,22 +307,35 @@ class _AttendanceCardState extends ConsumerState<AttendanceCard> {
                 ],
               ),
               const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.info_outline,
-                    color: AppColors.textWhite,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    statusText,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textWhite,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isCheckedOut 
+                      ? AppColors.menuBgGreen 
+                      : AppColors.menuBgYellow,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isCheckedOut ? Icons.check_circle : Icons.access_time_filled,
+                      color: isCheckedOut 
+                          ? AppColors.textSuccess 
+                          : AppColors.iconYellow,
+                      size: 14,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 5),
+                    Text(
+                      statusText,
+                      style: AppTextStyles.bodySmallMedium.copyWith(
+                        color: isCheckedOut 
+                            ? AppColors.textSuccess 
+                            : AppColors.iconYellow,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           );

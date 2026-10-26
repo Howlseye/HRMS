@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../models/employee_model.dart';
@@ -41,9 +42,8 @@ class EmployeeCard extends StatelessWidget {
               children: [
                 Text(
                   employee.name,
-                  style: AppTextStyles.bodyMediumMedium.copyWith(
+                  style: AppTextStyles.bodyMediumSemiBold.copyWith(
                     color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -58,7 +58,7 @@ class EmployeeCard extends StatelessWidget {
           ),
           IconButton(
             icon: SvgPicture.asset(
-              'assets/icons/whatsapp_icon.svg',
+              AppAssets.whatsappIcon,
               width: 20,
               height: 20,
               colorFilter: const ColorFilter.mode(AppColors.iconDisabled, BlendMode.srcIn),

@@ -76,12 +76,16 @@ class AccountScreen extends ConsumerWidget {
                         AccountMenuItem(
                           icon: Icons.fact_check_outlined,
                           title: AppStrings.attendanceLog,
-                          onTap: () {},
+                          onTap: () {
+                            context.push('/attendance-log');
+                          },
                         ),
                         AccountMenuItem(
                           icon: Icons.assignment_outlined,
                           title: AppStrings.logBook,
-                          onTap: () {},
+                          onTap: () {
+                            context.push('/attendance-log');
+                          },
                         ),
                       ],
                     ),

@@ -18,6 +18,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
   );
 
+
   static const TextStyle displayMediumHeavy = TextStyle(
     fontFamily: fontFamilySecondary,
     fontSize: 24,
@@ -112,6 +113,18 @@ class AppTextStyles {
     fontFamily: fontFamilyPrimary,
     fontSize: 12,
     fontWeight: FontWeight.w400,
+  );
+
+  static const TextStyle bodySmallMedium = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+  );
+
+  static const TextStyle bodySmallSemiBold = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
   );
 
   static const TextStyle bodySmallBold = TextStyle(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
+import '../constants/app_assets.dart';
 import '../constants/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import 'custom_button.dart';
@@ -12,6 +13,8 @@ class SuccessScreen extends StatelessWidget {
   final VoidCallback onButtonPressed;
   final VoidCallback onClosePressed;
   final String? lottieAsset;
+  final double lottieHeight;
+  final double lottieWidth;
 
   const SuccessScreen({
     super.key,
@@ -20,7 +23,9 @@ class SuccessScreen extends StatelessWidget {
     required this.buttonText,
     required this.onButtonPressed,
     required this.onClosePressed,
-    this.lottieAsset,
+    this.lottieAsset = AppAssets.successLottie,
+    this.lottieHeight = 140,
+    this.lottieWidth = 248,
   });
 
   @override
@@ -58,19 +63,22 @@ class SuccessScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             lottieAsset != null
-                                ? Lottie.asset(
-                                    lottieAsset!,
-                                    height: 240,
-                                    width: 240,
-                                    fit: BoxFit.contain,
-                                    repeat: false,
+                                ? Transform.scale(
+                                    scale: 1.8,
+                                    child: Lottie.asset(
+                                      lottieAsset!,
+                                      height: lottieHeight,
+                                      width: lottieWidth,
+                                      fit: BoxFit.contain,
+                                      repeat: false,
+                                    ),
                                   )
                                 : SvgPicture.asset(
-                                    'assets/icons/success.svg',
+                                    AppAssets.successIcon,
                                     height: 80,
                                     width: 80,
                                   ),
-                            SizedBox(height: lottieAsset != null ? 0 : 24),
+                            SizedBox(height: lottieAsset != null ? 8 : 24),
                       Text(
                         title,
                         style: AppTextStyles.displayMediumBold.copyWith(

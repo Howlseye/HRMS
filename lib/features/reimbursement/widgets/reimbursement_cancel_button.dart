@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -27,7 +28,7 @@ class ReimbursementCancelButton extends ConsumerWidget {
           showDialog(
             context: context,
             builder: (ctx) => AppPopup(
-              svgAsset: 'assets/icons/popup_cancel_icon.svg',
+              svgAsset: AppAssets.popupCancelIcon,
               title: AppStrings.cancelReimburseTitle,
               description: AppStrings.cancelReimburseDesc,
               primaryButtonText: AppStrings.confirmCancel,

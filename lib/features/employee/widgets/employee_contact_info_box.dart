@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -49,7 +50,7 @@ class EmployeeContactInfoBox extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: SvgPicture.asset(
-                      'assets/icons/whatsapp_icon.svg',
+                      AppAssets.whatsappIcon,
                       colorFilter: const ColorFilter.mode(
                         AppColors.iconDisabled,
                         BlendMode.srcIn,

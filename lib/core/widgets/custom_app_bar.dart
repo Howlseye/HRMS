@@ -18,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.onBackPressed,
     this.backgroundColor = AppColors.transparent,
-    this.iconColor = AppColors.iconGray,
+    this.iconColor = AppColors.iconNavy,
     this.centerTitle = true,
     this.actions,
     this.leading,
@@ -31,7 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor,
       elevation: 0,
       scrolledUnderElevation: 0,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: AppColors.transparent,
       centerTitle: centerTitle,
       title: Text(
         title,

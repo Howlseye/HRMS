@@ -34,14 +34,16 @@ class AttendanceSuccessScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 4),
-            Text(
-              timeRange,
-              style: AppTextStyles.titleSemiBold.copyWith(
-                color: AppColors.textTertiary,
+            if (timeRange.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                timeRange,
+                style: AppTextStyles.titleSemiBold.copyWith(
+                  color: AppColors.textTertiary,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
+            ],
             if (alertMessage != null) ...[
               const SizedBox(height: 24),
               Text(
@@ -60,11 +62,39 @@ class AttendanceSuccessScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ],
+            if (isCheckIn) ...[
+              const SizedBox(height: 32),
+              Text(
+                AppStrings.selamatBekerja,
+                style: AppTextStyles.titleBold.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  AppStrings.checkInSuccessDesc,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textTertiary,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           ],
         ),
       ),
-      buttonText: AppStrings.back,
-      onButtonPressed: () => context.pop(),
+      buttonText: isCheckIn ? AppStrings.dailyLogTitle : AppStrings.back,
+      onButtonPressed: () {
+        if (isCheckIn) {
+          context.push('/add-log-book');
+        } else {
+          context.pop();
+        }
+      },
       onClosePressed: () => context.pop(),
     );
   }

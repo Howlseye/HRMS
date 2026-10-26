@@ -1,3 +1,4 @@
+import 'package:absensi/core/constants/app_assets.dart';
 import 'package:absensi/core/constants/app_strings.dart';
 import 'package:absensi/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               SizedBox(height: MediaQuery.of(context).size.height * 0.3),
               Image.asset(
-                'assets/images/app_logo.png',
+                AppAssets.appLogo,
                  scale: 0.8,
               ),
               Text(
@@ -70,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               Lottie.asset(
-                'assets/lottie/loading.json',
+                AppAssets.loadingLottie,
                 width: 150,
               ),
             ],

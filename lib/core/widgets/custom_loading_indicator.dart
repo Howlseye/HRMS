@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import '../constants/app_assets.dart';
 
 class CustomLoadingIndicator extends StatelessWidget {
   final double width;
@@ -15,7 +16,7 @@ class CustomLoadingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Lottie.asset(
-        'assets/lottie/loading.json',
+        AppAssets.loadingLottie,
         width: width,
         height: height,
         fit: BoxFit.contain,

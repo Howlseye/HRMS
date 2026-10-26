@@ -11,7 +11,7 @@ class ApiEndpoints {
 
   // Employee
   static const String getEmployees = 'resource/Employee';
-  static const String getEmployeeDetail = 'resource/Employee/{id}';
+  static const String getEmployeeDetail = 'resource/Employee/{id}?fields["*"]';
 
   //Shift
   static const String getShift = 'resource/Shift Assignment?fields=["shift_type","start_date","end_date", "shift_location"]';
@@ -39,4 +39,9 @@ class ApiEndpoints {
   static const String getReimbursements = 'resource/Expense Claim';
   static const String getReimbursementsDetail = 'resource/Expense Claim/{id}';
 
+  //Log Book
+  static const String getTemplate = 'method/hrms_custom.api.timesheet_mobile.get_timesheet_form?target_date={date}';
+  static const String getLog = 'resource/Timesheet/{id}';
+  static const String getLogStatus = 'resource/Timesheet Approval?fields=["name", "date", "total_hours", "status"]&filters=[["timesheet", "=", {timesheet}]]';
+  static const String addActivity = 'resource/Timesheet';
 }

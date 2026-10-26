@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../constants/app_assets.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../theme/app_text_styles.dart';
@@ -27,7 +28,7 @@ class AppErrorWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
-            'assets/icons/popup_cancel_icon.svg',
+            AppAssets.popupCancelIcon,
             height: 64,
             width: 78,
           ),

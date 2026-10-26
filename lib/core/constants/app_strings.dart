@@ -4,6 +4,7 @@ class AppStrings {
   // Common
   static const String appName = 'HRMS 79';
   static const String appSubtitle = 'Human Resource\nManagement System';
+  static const String requiredAsterisk = ' *';
   
   // Login Screen
   static const String welcome = 'Selamat Datang';
@@ -61,6 +62,23 @@ class AppStrings {
   static const String noAttendanceHistoryDesc = 'Belum ada riwayat kehadiran yang\ntercatat untuk periode ini.';
   static const String noReason = 'Tidak mencantumkan alasan';
 
+  // Admin Home Screen
+  static const String approvalDailyLog = 'Persetujuan Daily Log';
+  static const String reviewToday = 'Review Hari Ini';
+  static const String participantsNeedApproval = 'peserta perlu persetujuan';
+  static const String totalParticipants = 'Total Peserta';
+  static const String waitingApprove = 'Waiting Approve';
+  static const String notSubmit = 'Not Submit';
+  
+  // Log Book Tabs
+  static const String tabApproval = 'Persetujuan';
+  static const String tabMyLog = 'Log Saya';
+  static const String todayDateAdmin = 'Hari ini, 1 Agustus 2026';
+  static const String labelHariIni = 'Hari ini';
+  static const String noApprovalTitle = 'Tidak Ada Persetujuan';
+  static const String allTalentApprovedSubtitle = 'Semua talent sudah disetujui';
+  static const String totalParticipantsValue = '171';
+
   // Log Book Screen (Dummy Data)
   static const String logBookTitle = 'Log Book';
   static const String dummyMonth = 'Agustus 2026';
@@ -70,8 +88,59 @@ class AppStrings {
   static const String statWaitingValue = '0';
   static const String statRejected = 'Rejected';
   static const String statRejectedValue = '0';
+  static const String statMissed = 'Missed';
+  static const String statusDraft = 'Draft';
+  static const String todayActivityInfoMsg = 'Anda dapat memilih daily log pada bagian ini untuk mencatat task yang dikerjakan hari ini';
   static const String listDailyLog = 'List Daily Log';
   static const String btnExport = 'Export';
+  static const String btnReject = 'Tolak';
+  static const String btnApprove = 'Setujui';
+  static const String dailyLogTitle = 'Daily Log';
+  static const String detailLogBookTitle = 'Log Book Detail';
+  static const String nameLabel = 'Nama';
+  static const String customerLabel = 'Customer';
+  static const String periodLabel = 'Periode';
+  static const String fullNameLabel = 'Nama Lengkap';
+  static const String dummyFullName = 'Nikola Sagala';
+  static const String companyLabel = 'Perusahaan';
+  static const String dummyCompany = 'Padepokan Tujuh Sembilan';
+  static const String projectLabel = 'Project';
+  static const String dummyProject = 'HRMS';
+  static const String addOrFixTaskBannerMsg = 'Anda dapat menambah atau memperbaiki task kapan saja sebelum check out.';
+  static const String taskLabel = 'Task';
+  static const String taskWorkedTodaySubtitle = 'Task yang anda kerjakan hari ini';
+  static const String taskWorkedPastSubtitle = 'Task yang anda kerjakan';
+  static const String noTaskYet = 'Belum ada task';
+  static const String addTaskBtn = 'Tambahkan Task';
+  static const String statusSaved = 'Tersimpan';
+  static const String totalTaskLabel = 'Total Task';
+  static const String taskTypeLabel = 'Jenis Task';
+  static const String taskSummaryLabel = 'Ringkasan Task';
+  static const String taskSummaryHint = 'Jelaskan ringkasan task yang dikerjakan';
+  static const String taskConstraintHint = 'Jelaskan kendala yang dialami saat mengerjakan task';
+  static const String durationLabel = 'Durasi';
+  static const String hoursLabel = 'Jam';
+  static const String minutesLabel = 'Menit';
+  static const String btnSave = 'Simpan';
+  static const String editTaskTitle = 'Edit Task';
+  static const String submitLogBookPopupTitle = 'Kirim Log Book';
+  static const String submitLogBookPopupDesc = 'Setelah anda mengirim log book, anda tidak dapat mengeditnya lagi. Yakin ingin melanjutkan?';
+  static const String deleteTaskPopupTitle = 'Hapus Task';
+  static const String deleteTaskPopupDesc = 'Task ini akan dihapus dari daily log dan tidak dapat dipulihkan.';
+  static const String submitLogBookSuccessTitle = 'Log Book Dikirim';
+  static const String submitLogBookSuccessMsg = 'Log Book berhasil dikirim. Anda sudah dapat melakukan check out sekarang.';
+  static const String idLogBookLabel = 'ID Log Book';
+  static const String dash = '-';
+  static const String dummyIdLogBook = 'LB-20260901-001';
+  static const String noLogBookSentToday = 'Tidak ada Log Book yang dikirim pada hari ini.';
+  static const String dummyDurationDetail = '3 Jam 25 Menit';
+  static const String dummySingleTaskCount = '1';
+  static const String dummyDateSeptember1 = '1 September 2026';
+  static const String dummyTime0759 = '07:59';
+  static const String dummyTime1715 = '17:15';
+  static const String dummyConstraintLoginEmail = 'Tidak bisa login email';
+  static const String dummyAdminDetailDesc = 'Mempelajari konsep dasar Clean Architecture dari Robert C. Martin beserta implementasinya pada framework Flutter menggunakan referensi dari Reso Coder. Setelah itu, mengikuti pertemuan dengan mentor untuk meninjau user story dan penyusunan log inisiasi proyek. Kegiatan ditutup dengan sesi tanya jawab bersama tim developer dan mentor guna menyepakati aturan kerja proyek, termasuk persiapan pelaksanaan rutinitas Agile yang akan dimulai pada Senin depan.';
+  static const String ninePlus = '9+';
   
   // Add Log Book Screen (Check Out)
   static const String addLogBookTitle = 'Check Out';
@@ -104,6 +173,38 @@ class AppStrings {
   static const String dummyDate4 = 'Kam, 6 Agu 2026';
   static const String dummyDate5 = 'Jum, 7 Agu 2026';
   static const String dummyDate6 = 'Sen, 10 Agu 2026';
+  static const String dummyLogActivity1 = 'Development, Bug fixing';
+  static const String dummyLogDetail1 = 'Mengimplementasikan slicing UI dan penanganan state pada modul log book.';
+  static const String dummyLogConstraint1 = 'Tidak ada kendala';
+  static const String dummyLogActivity2 = 'Development, Testing';
+  static const String dummyLogDetail2 = 'Melakukan integrasi API dan pengujian fungsional pada modul absensi.';
+  static const String dummyLogActivity3 = 'Meeting, Documentation';
+  static const String dummyLogDetail3 = 'Mengikuti sprint planning dan menyusun dokumentasi teknis proyek.';
+  static const String dummyLogActivity4 = 'Development, Support';
+  static const String dummyLogDetail4 = 'Memperbaiki isu performa dan pendampingan penggunaan sistem.';
+  static const String dummyLogConstraint4 = 'Response time server terkadang lambat saat jam sibuk.';
+  static const String dummyLogActivity5 = 'Development, Bug fixing';
+  static const String dummyLogDetail5 = 'Melakukan refactoring kode pada provider dan repository.';
+  static const String dummyLogConstraint5 = 'Kendala keterlambatan respon dari API eksternal.';
+  static const String dummyLogRejectReason5 = 'Terdapat log yang tidak sesuai dengan aktivitas sebenarnya';
+  static const String dummyEmpName1 = 'Afdal Ramdan';
+  static const String dummyEmpRole1 = 'UI/UX Designer';
+  static const String dummyEmpName2 = 'Budi Santoso';
+  static const String dummyEmpRole2 = 'HR Manager';
+  static const String dummyEmpName3 = 'Citra Dewi';
+  static const String dummyEmpRole3 = 'Data Analyst';
+  static const String dummyEmpName4 = 'Doni Prabowo';
+  static const String dummyEmpRole4 = 'Project Coordinator';
+  static const String dummyEmpName5 = 'Eka Lestari';
+  static const String dummyEmpRole5 = 'System Administrator';
+  static const String dummyEmpName6 = 'Fajar Nugroho';
+  static const String dummyEmpRole6 = 'Software Engineer';
+  static const String dummyEmpName7 = 'Gita Rahmawati';
+  static const String dummyEmpRole7 = 'Business Analyst';
+  static const String dummyEmpName8 = 'Hendra Wijaya';
+  static const String dummyEmpRole8 = 'Software Engineer';
+  static const String dummyEmpName9 = 'Indah Permatasari';
+  static const String dummyEmpRole9 = 'Recruitment Specialist';
   static const String statusNotStarted = 'Not Started';
   static const String detailLogTitle = 'Detail Log';
   static const String checkInOut = 'Check in & out';
@@ -155,6 +256,8 @@ class AppStrings {
   static const String noAnnouncementSub = 'Tidak ada pengumuman\nyang tersedia untuk saat ini.';
   // Attendance Success Screen
   static const String checkInSent = 'Check In Dikirim';
+  static const String selamatBekerja = 'Selamat Bekerja!';
+  static const String checkInSuccessDesc = 'Anda bisa mulai bekerja seperti biasa. Saat ingin mencatat pekerjaan, buka aktivitas hari ini, lalu tekan tambah task. Tidak perlu mengisi semuanya sekarang.';
   static const String checkOutSent = 'Check Out Dikirim';
   static const String back = 'Kembali';
 

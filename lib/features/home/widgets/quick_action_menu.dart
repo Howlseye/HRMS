@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -17,7 +18,7 @@ class QuickActionMenu extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildMenuItem(
-            icon: 'assets/icons/absensi_icon.png',
+            icon: AppAssets.absensiIcon,
             label: AppStrings.menuAbsensi,
             backgroundColor: AppColors.menuBgBlue,
             onTap: () {
@@ -25,7 +26,7 @@ class QuickActionMenu extends StatelessWidget {
             },
           ),
           _buildMenuItem(
-            icon: 'assets/icons/reimburse_icon.png',
+            icon: AppAssets.reimburseIcon,
             label: AppStrings.menuReimburse,
             backgroundColor: AppColors.menuBgGreen,
             onTap: () {
@@ -33,7 +34,7 @@ class QuickActionMenu extends StatelessWidget {
             },
           ),
           _buildMenuItem(
-            icon: 'assets/icons/cuti_icon.png',
+            icon: AppAssets.cutiIcon,
             label: AppStrings.menuCuti,
             backgroundColor: AppColors.menuBgPink,
             onTap: () {
@@ -41,7 +42,7 @@ class QuickActionMenu extends StatelessWidget {
             },
           ),
           _buildMenuItem(
-            icon: 'assets/icons/pengumuman_icon.png',
+            icon: AppAssets.pengumumanIcon,
             label: AppStrings.menuPengumuman,
             backgroundColor: AppColors.menuBgYellow,
             onTap: () {
